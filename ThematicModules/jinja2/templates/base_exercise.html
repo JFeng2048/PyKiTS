@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ page_title }}{% endblock %} - {{ site_name }}</title>
+    {% block styles %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        nav {
+            background-color: #444;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        nav ul li a:hover {
+            background-color: #555;
+        }
+        main {
+            padding: 20px 0;
+            min-height: 60vh;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        .content-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    {% endblock %}
+    {% block scripts %}
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>{{ site_name }}</h1>
+            <p>{% block header_subtitle %}{% endblock %}</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                {% block navigation %}
+                {% for item in navigation %}
+                    <li><a href="{{ item.url }}">{{ item.name }}</a></li>
+                {% endfor %}
+                {% endblock %}
+            </ul>
+        </div>
+    </nav>
+    
+    <main>
+        <div class="container">
+            {% block content %}
+            <div class="content-box">
+                <h2>基础模板内容</h2>
+                <p>这个内容应该被子模板覆盖。</p>
+            </div>
+            {% endblock %}
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            {% block footer %}
+            <p>{{ footer_text }}</p>
+            {% endblock %}
+        </div>
+    </footer>
+</body>
+</html>

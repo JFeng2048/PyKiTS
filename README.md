@@ -20,3 +20,6 @@
 
 ### 应用案例层（Application Cases)
 - 应用案例层展示综合应用和解决方案
+
+### pip 镜像源
+- 清华源: https://pypi.tuna.tsinghua.edu.cn/simple

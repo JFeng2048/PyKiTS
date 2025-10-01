@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2基础语法练习</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .exercise-section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        .highlight {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jinja2基础语法练习</h1>
+    
+    <div class="exercise-section">
+        <h2>1. 变量输出</h2>
+        <p>你的名字是: <strong>{{ name }}</strong></p>
+        <p>你的年龄是: <strong>{{ age }}</strong></p>
+        <p>当前时间: <strong>{{ current_time.strftime('%Y-%m-%d %H:%M:%S') }}</strong></p>
+    </div>
+    
+    <div class="exercise-section">
+        <h2>2. 列表操作</h2>
+        <p>你的技能列表:</p>
+        <ul>
+            {% for skill in skills %}
+                <li>{{ loop.index }}. {{ skill }}</li>
+            {% endfor %}
+        </ul>
+        
+        {% if skills|length > 0 %}
+            <p class="highlight">你有 {{ skills|length }} 项技能</p>
+        {% else %}
+            <p>请添加你的技能</p>
+        {% endif %}
+    </div>
+    
+    <div class="exercise-section">
+        <h2>3. 字典操作</h2>
+        <p>联系方式:</p>
+        <ul>
+            <li>邮箱: {{ contact.email }}</li>
+            <li>电话: {{ contact.phone }}</li>
+        </ul>
+    </div>
+    
+    <div class="exercise-section">
+        <h2>4. 表达式和过滤器</h2>
+        <p>明年你将 {{ age + 1 }} 岁</p>
+        <p>你的名字（大写）: {{ name|upper }}</p>
+        <p>技能列表（逗号分隔）: {{ skills|join(', ') }}</p>
+        <p>当前日期（格式化）: {{ current_time|string }}</p>
+    </div>
+    
+    <div class="exercise-section">
+        <h2>5. 条件语句</h2>
+        {% if age >= 18 %}
+            <p>你已经成年了！</p>
+        {% else %}
+            <p>你还未成年。</p>
+        {% endif %}
+        
+        {% if 'Python' in skills %}
+            <p class="highlight">你会Python编程！</p>
+        {% endif %}
+    </div>
+    
+    <footer>
+        <p>© {{ current_time.year }} Jinja2学习中心 - 基础语法练习</p>
+    </footer>
+</body>
+</html>

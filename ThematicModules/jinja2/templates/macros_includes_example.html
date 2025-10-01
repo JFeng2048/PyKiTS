@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2宏和包含功能示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            color: #007bff;
+            margin-top: 40px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #495057;
+            margin-top: 30px;
+        }
+        
+        .section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .demo-container {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+        }
+        
+        .description {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        /* 确保演示区域的组件样式能够正常显示 */
+        {% include 'macros/components.html' %}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Jinja2宏和包含功能示例</h1>
+        <p>本页面展示了Jinja2模板引擎中宏和包含功能的使用方法</p>
+    </header>
+
+    <!-- 包含功能示例 -->
+    <div class="section">
+        <h2>包含功能示例</h2>
+        <div class="description">
+            <strong>包含功能</strong>允许将一个模板的内容插入到另一个模板中，是代码复用的一种重要方式。
+            下面是从其他模板文件中包含的内容。
+        </div>
+        
+        <h3>导航栏包含示例</h3>
+        {% include 'includes/navbar.html' %}
+        
+        <h3>页脚包含示例</h3>
+        {% include 'includes/footer.html' %}
+    </div>
+
+    <!-- 宏功能示例 -->
+    <div class="section">
+        <h2>宏功能示例</h2>
+        <div class="description">
+            <strong>宏</strong>类似于编程语言中的函数，可以接收参数并生成HTML内容，是构建可复用UI组件的强大工具。
+            下面是各种宏的使用示例。
+        </div>
+        
+        {# 导入宏文件 #}
+        {% from 'macros/components.html' import button, card, alert, input_field, textarea, select_field, checkbox, radio, render_list, render_table, pagination, badge, progress_bar %}
+        
+        <!-- 按钮宏示例 -->
+        <h3>按钮宏示例</h3>
+        <div class="demo-container">
+            <p>基本按钮：</p>
+            {{ button('默认按钮') }}
+            {{ button('主要按钮', type='primary') }}
+            {{ button('成功按钮', type='success') }}
+            {{ button('信息按钮', type='info') }}
+            {{ button('警告按钮', type='warning') }}
+            {{ button('危险按钮', type='danger') }}
+            {{ button('链接按钮', type='link') }}
+            
+            <p style="margin-top: 15px;">不同尺寸的按钮：</p>
+            {{ button('超小按钮', size='xs') }}
+            {{ button('小按钮', size='sm') }}
+            {{ button('中等按钮') }}
+            {{ button('大按钮', size='lg') }}
+            
+            <p style="margin-top: 15px;">其他属性的按钮：</p>
+            {{ button('禁用按钮', disabled=true) }}
+            {{ button('块级按钮', block=true) }}
+            {{ button('链接按钮', href='https://example.com') }}
+        </div>
+        
+        <div class="code-block">
+{# 导入按钮宏并使用 #}
+{% from 'macros/components.html' import button %}
+
+{# 基本按钮 #}
+{{ button('默认按钮') }}
+{{ button('主要按钮', type='primary') }}
+{{ button('成功按钮', type='success') }}
+
+{# 不同尺寸的按钮 #}
+{{ button('超小按钮', size='xs') }}
+{{ button('小按钮', size='sm') }}
+{{ button('大按钮', size='lg') }}
+
+{# 其他属性的按钮 #}
+{{ button('禁用按钮', disabled=true) }}
+{{ button('块级按钮', block=true) }}
+{{ button('链接按钮', href='https://example.com') }}
+        </div>
+        
+        <!-- 卡片宏示例 -->
+        <h3>卡片宏示例</h3>
+        <div class="demo-container">
+            {{ card(
+                title='基本卡片', 
+                content='这是一个简单的卡片示例，用于展示信息内容。卡片可以包含标题、正文和页脚。',
+                footer='卡片页脚区域'
+            ) }}
+            
+            <div style="margin-top: 15px;">
+                {{ card(
+                    title='产品信息卡片', 
+                    content='<h4>高级Jinja2教程</h4><p>学习如何高效使用Jinja2模板引擎构建动态网页。</p>',
+                    footer='<a href="#">查看详情</a>'
+                ) }}
+            </div>
+        </div>
+        
+        <div class="code-block">
+{# 导入卡片宏并使用 #}
+{% from 'macros/components.html' import card %}
+
+{# 基本卡片 #}
+{{ card(
+    title='基本卡片', 
+    content='这是一个简单的卡片示例，用于展示信息内容。',
+    footer='卡片页脚区域'
+) }}
+
+{# 产品信息卡片 #}
+{{ card(
+    title='产品信息卡片', 
+    content='<h4>高级Jinja2教程</h4><p>学习如何高效使用Jinja2模板引擎构建动态网页。</p>',
+    footer='<a href="#">查看详情</a>'
+) }}
+        </div>
+        
+        <!-- 警告框宏示例 -->
+        <h3>警告框宏示例</h3>
+        <div class="demo-container">
+            {{ alert('这是一条信息提示', type='info') }}
+            {{ alert('操作成功完成', type='success') }}
+            {{ alert('请注意，这是一条警告信息', type='warning') }}
+            {{ alert('操作失败，请重试', type='danger') }}
+            {{ alert('这是一条可关闭的信息', type='info', dismissible=true) }}
+        </div>
+        
+        <div class="code-block">
+{# 导入警告框宏并使用 #}
+{% from 'macros/components.html' import alert %}
+
+{{ alert('这是一条信息提示', type='info') }}
+{{ alert('操作成功完成', type='success') }}
+{{ alert('请注意，这是一条警告信息', type='warning') }}
+{{ alert('操作失败，请重试', type='danger') }}
+{{ alert('这是一条可关闭的信息', type='info', dismissible=true) }}
+        </div>
+        
+        <!-- 表单元素宏示例 -->
+        <h3>表单元素宏示例</h3>
+        <div class="demo-container">
+            <form>
+                {{ input_field('username', label='用户名', placeholder='请输入用户名', required=true, help_text='用于登录系统的用户名') }}
+                {{ input_field('password', type='password', label='密码', placeholder='请输入密码', required=true) }}
+                {{ input_field('email', type='email', label='电子邮箱', placeholder='your@email.com') }}
+                {{ input_field('age', type='number', label='年龄', value='25') }}
+                
+                {{ textarea('description', label='个人描述', placeholder='请简要介绍一下自己', rows=3) }}
+                
+                {{ select_field('gender', label='性别', options={'male': '男', 'female': '女', 'other': '其他'}, selected='male') }}
+                
+                <div style="margin-bottom: 1rem;">
+                    <label>爱好</label><br>
+                    {{ checkbox('hobby_reading', '阅读') }}
+                    {{ checkbox('hobby_sports', '运动', checked=true) }}
+                    {{ checkbox('hobby_music', '音乐') }}
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label>首选联系方式</label><br>
+                    {{ radio('contact', 'email', '电子邮箱', checked=true) }}
+                    {{ radio('contact', 'phone', '电话') }}
+                    {{ radio('contact', 'sms', '短信') }}
+                </div>
+                
+                {{ button('提交表单', type='primary') }}
+                {{ button('取消', type='default') }}
+            </form>
+        </div>
+        
+        <div class="code-block">
+{# 导入表单宏并使用 #}
+{% from 'macros/components.html' import input_field, textarea, select_field, checkbox, radio, button %}
+
+<form>
+    {{ input_field('username', label='用户名', placeholder='请输入用户名', required=true) }}
+    {{ input_field('password', type='password', label='密码', placeholder='请输入密码', required=true) }}
+    {{ textarea('description', label='个人描述', placeholder='请简要介绍一下自己', rows=3) }}
+    {{ select_field('gender', label='性别', options={'male': '男', 'female': '女'}, selected='male') }}
+    
+    <div>
+        <label>爱好</label><br>
+        {{ checkbox('hobby_reading', '阅读') }}
+        {{ checkbox('hobby_sports', '运动', checked=true) }}
+    </div>
+    
+    {{ button('提交表单', type='primary') }}
+    {{ button('取消', type='default') }}
+</form>
+        </div>
+        
+        <!-- 列表宏示例 -->
+        <h3>列表宏示例</h3>
+        <div class="demo-container">
+            <p>无序列表：</p>
+            {{ render_list(['苹果', '香蕉', '橙子', '梨', '葡萄']) }}
+            
+            <p style="margin-top: 15px;">有序列表：</p>
+            {{ render_list(['第一步', '第二步', '第三步'], ordered=true) }}
+            
+            <p style="margin-top: 15px;">带样式的列表：</p>
+            {{ render_list(['项目1', '项目2', '项目3'], classes='list-group list-group-flush') }}
+        </div>
+        
+        <div class="code-block">
+{# 导入列表宏并使用 #}
+{% from 'macros/components.html' import render_list %}
+
+{# 无序列表 #}
+{{ render_list(['苹果', '香蕉', '橙子', '梨', '葡萄']) }}
+
+{# 有序列表 #}
+{{ render_list(['第一步', '第二步', '第三步'], ordered=true) }}
+        </div>
+        
+        <!-- 表格宏示例 -->
+        <h3>表格宏示例</h3>
+        <div class="demo-container">
+            <div class="table-container">
+                {% set headers = ['ID', '姓名', '年龄', '职位', '部门'] %}
+                {% set rows = [
+                    ['1', '张三', '28', '软件工程师', '技术部'],
+                    ['2', '李四', '32', '产品经理', '产品部'],
+                    ['3', '王五', '45', '项目经理', '项目管理部'],
+                    ['4', '赵六', '36', 'UI设计师', '设计部']
+                ] %}
+                {{ render_table(headers, rows) }}
+            </div>
+        </div>
+        
+        <div class="code-block">
+{# 导入表格宏并使用 #}
+{% from 'macros/components.html' import render_table %}
+
+{% set headers = ['ID', '姓名', '年龄', '职位', '部门'] %}
+{% set rows = [
+    ['1', '张三', '28', '软件工程师', '技术部'],
+    ['2', '李四', '32', '产品经理', '产品部'],
+    ['3', '王五', '45', '项目经理', '项目管理部']
+] %}
+{{ render_table(headers, rows) }}
+        </div>
+        
+        <!-- 徽章宏示例 -->
+        <h3>徽章宏示例</h3>
+        <div class="demo-container">
+            {{ badge('新') }} {{ badge('热门', 'primary') }} {{ badge('推荐', 'success') }} {{ badge('促销', 'warning') }} {{ badge('折扣', 'danger') }}
+            <p style="margin-top: 15px;">圆角徽章：</p>
+            {{ badge('5条消息', 'primary', pill=true) }} {{ badge('99+', 'danger', pill=true) }}
+        </div>
+        
+        <div class="code-block">
+{# 导入徽章宏并使用 #}
+{% from 'macros/components.html' import badge %}
+
+{{ badge('新') }} {{ badge('热门', 'primary') }} {{ badge('推荐', 'success') }}
+{{ badge('5条消息', 'primary', pill=true) }} {{ badge('99+', 'danger', pill=true) }}
+        </div>
+        
+        <!-- 进度条宏示例 -->
+        <h3>进度条宏示例</h3>
+        <div class="demo-container">
+            <p>基本进度条：</p>
+            {{ progress_bar(60) }}
+            
+            <p style="margin-top: 15px;">不同颜色的进度条：</p>
+            {{ progress_bar(25, type='success') }}
+            {{ progress_bar(50, type='info') }}
+            {{ progress_bar(75, type='warning') }}
+            {{ progress_bar(90, type='danger') }}
+            
+            <p style="margin-top: 15px;">带标签的进度条：</p>
+            {{ progress_bar(45, type='primary', label=true) }}
+        </div>
+        
+        <div class="code-block">
+{# 导入进度条宏并使用 #}
+{% from 'macros/components.html' import progress_bar %}
+
+{{ progress_bar(60) }}
+{{ progress_bar(25, type='success') }}
+{{ progress_bar(50, type='info') }}
+{{ progress_bar(45, type='primary', label=true) }}
+        </div>
+        
+        <!-- 分页宏示例 -->
+        <h3>分页宏示例</h3>
+        <div class="demo-container">
+            {{ pagination(4, 20, '/products?page=') }}
+        </div>
+        
+        <div class="code-block">
+{# 导入分页宏并使用 #}
+{% from 'macros/components.html' import pagination %}
+
+{{ pagination(4, 20, '/products?page=') }}
+        </div>
+    </div>
+
+    <!-- 高级用法示例 -->
+    <div class="section">
+        <h2>高级用法示例</h2>
+        
+        <h3>条件包含</h3>
+        <div class="demo-container">
+            <div class="description">
+                条件包含允许根据条件决定是否包含特定的模板内容。
+            </div>
+            
+            {% set show_feature = true %}
+            {% if show_feature %}
+                {% include 'includes/feature_banner.html' ignore missing %}
+            {% else %}
+                <p>功能区域已隐藏</p>
+            {% endif %}
+        </div>
+        
+        <div class="code-block">
+{# 条件包含示例 #}
+{% set show_feature = true %}
+{% if show_feature %}
+    {% include 'includes/feature_banner.html' ignore missing %}
+{% else %}
+    <p>功能区域已隐藏</p>
+{% endif %}
+        </div>
+        
+        <h3>变量模板名</h3>
+        <div class="demo-container">
+            <div class="description">
+                可以使用变量作为模板名进行包含，使代码更加灵活。
+            </div>
+            
+            {% set template_name = 'includes/welcome_message.html' %}
+            {% include template_name ignore missing %}
+        </div>
+        
+        <div class="code-block">
+{# 变量模板名示例 #}
+{% set template_name = 'includes/welcome_message.html' %}
+{% include template_name ignore missing %}
+        </div>
+        
+        <h3>嵌套宏</h3>
+        <div class="demo-container">
+            <div class="description">
+                宏可以嵌套调用，创建更复杂的组件。
+            </div>
+            
+            {{ card(
+                title='带按钮的卡片',
+                content='这张卡片包含了一些信息和操作按钮。',
+                footer=button('操作1') ~ ' ' ~ button('操作2', type='primary')
+            ) }}
+        </div>
+        
+        <div class="code-block">
+{# 嵌套宏示例 #}
+{{ card(
+    title='带按钮的卡片',
+    content='这张卡片包含了一些信息和操作按钮。',
+    footer=button('操作1') ~ ' ' ~ button('操作2', type='primary')
+) }}
+        </div>
+        
+        <h3>宏与过滤器结合</h3>
+        <div class="demo-container">
+            <div class="description">
+                宏可以和过滤器结合使用，提供更强大的功能。
+            </div>
+            
+            {% set user_list = ['张三', '李四', '王五', '赵六'] %}
+            {{ render_list(user_list | sort) }}
+        </div>
+        
+        <div class="code-block">
+{# 宏与过滤器结合示例 #}
+{% set user_list = ['张三', '李四', '王五', '赵六'] %}
+{{ render_list(user_list | sort) }}
+        </div>
+    </div>
+
+    <!-- 最佳实践 -->
+    <div class="section">
+        <h2>宏和包含的最佳实践</h2>
+        <div class="note">
+            <ul>
+                <li><strong>模块化设计</strong>：将常用UI组件封装为宏，提高代码复用性。</li>
+                <li><strong>合理拆分</strong>：页面布局部分使用包含，UI组件使用宏。</li>
+                <li><strong>性能考虑</strong>：避免过多的嵌套包含，会影响渲染性能。</li>
+                <li><strong>命名规范</strong>：使用有意义的名称命名宏和包含文件。</li>
+                <li><strong>错误处理</strong>：使用<code>ignore missing</code>处理可能不存在的包含文件。</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 简单的JavaScript交互
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有按钮添加点击效果
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    if (this.getAttribute('disabled') !== 'disabled') {
+                        this.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+                    }
+                });
+            });
+            
+            // 简单的表单验证示例
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('表单提交成功！在实际应用中，这里会处理表单数据。');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

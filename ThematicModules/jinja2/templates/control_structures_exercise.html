@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2控制结构练习</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .exercise-section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        .active-user {
+            background-color: #e8f5e9;
+        }
+        .inactive-user {
+            background-color: #ffebee;
+        }
+        .stock-low {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .stock-medium {
+            color: #ff9800;
+        }
+        .stock-high {
+            color: #4caf50;
+        }
+        .highlight {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jinja2控制结构练习</h1>
+    
+    <div class="exercise-section">
+        <h2>1. 条件语句 (if-elif-else)</h2>
+        <p>根据用户状态显示不同信息：</p>
+        <table>
+            <tr>
+                <th>用户名</th>
+                <th>年龄</th>
+                <th>状态</th>
+                <th>角色</th>
+                <th>描述</th>
+            </tr>
+            {% for user in users %}
+            <tr class="{{ 'active-user' if user.is_active else 'inactive-user' }}">
+                <td>{{ user.name }}</td>
+                <td>{{ user.age }}</td>
+                <td>{{ '活跃' if user.is_active else '非活跃' }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    {% if user.role == 'admin' %}
+                        管理员用户
+                    {% elif user.role == 'manager' %}
+                        经理用户
+                    {% elif user.role == 'user' %}
+                        普通用户
+                    {% else %}
+                        未知角色
+                    {% endif %}
+                    {% if user.age > 35 %}
+                        (经验丰富)
+                    {% elif user.age < 25 %}
+                        (初级)
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div class="exercise-section">
+        <h2>2. 循环控制 (for循环)</h2>
+        <p>产品列表（带库存状态）：</p>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>产品名称</th>
+                <th>价格</th>
+                <th>库存</th>
+                <th>类别</th>
+                <th>库存状态</th>
+            </tr>
+            {% for product in products %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ product.name }}</td>
+                <td>¥{{ product.price }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.category }}</td>
+                <td class="{{
+                    'stock-low' if product.stock < 20 else
+                    'stock-medium' if product.stock < 50 else
+                    'stock-high'
+                }}">
+                    {% if product.stock < 20 %}
+                        库存不足
+                    {% elif product.stock < 50 %}
+                        库存中等
+                    {% else %}
+                        库存充足
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <p>循环信息：</p>
+        <ul>
+            <li>产品总数：{{ products|length }}</li>
+            <li>第一个产品：{{ products[0].name if products else '无' }}</li>
+            <li>最后一个产品：{{ products[-1].name if products else '无' }}</li>
+        </ul>
+    </div>
+    
+    <div class="exercise-section">
+        <h2>3. 嵌套循环</h2>
+        <p>类别和产品关系：</p>
+        {% for category, items in categories.items() %}
+            <h3>{{ category }}</h3>
+            <ul>
+                {% for item in items %}
+                    <li>{{ item }}
+                        {% set found = false %}
+                        {% for product in products %}
+                            {% if product.name == item %}
+                                - ¥{{ product.price }}
+                                {% set found = true %}
+                                {% break %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if not found %}
+                            - 暂无价格信息
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+    
+    <div class="exercise-section">
+        <h2>4. 循环变量的使用</h2>
+        <p>用户列表（带循环信息）：</p>
+        <ul>
+            {% for user in users %}
+                <li>
+                    {% if loop.first %}
+                        <strong>[第一个]</strong>
+                    {% elif loop.last %}
+                        <strong>[最后一个]</strong>
+                    {% endif %}
+                    {{ loop.index }}. {{ user.name }} ({{ user.role }})
+                    {% if loop.index0 % 2 == 0 %}
+                        <span class="highlight">(奇数位置)</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <p>循环统计：</p>
+        <div class="highlight">
+            <p>总共有 {{ loop.length }} 个用户（如果在循环内可用）</p>
+        </div>
+    </div>
+    
+    <div class="exercise-section">
+        <h2>5. 复杂条件和循环组合</h2>
+        <p>特殊用户展示：</p>
+        <ul>
+            {% for user in users %}
+                {% if user.is_active and (user.role == 'admin' or user.age > 30) %}
+                    <li class="highlight">{{ user.name }} - 重要用户 ({{ user.role }}, {{ user.age }}岁)</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        
+        <p>价格区间产品：</p>
+        <ul>
+            {% for product in products %}
+                {% if product.price > 1000 and product.price < 5000 %}
+                    <li>{{ product.name }} - ¥{{ product.price }} ({{ product.category }})</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <footer>
+        <p>© Jinja2学习中心 - 控制结构练习</p>
+    </footer>
+</body>
+</html>

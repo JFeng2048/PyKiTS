@@ -1,0 +1,828 @@
+{# 通用UI组件宏集合 #}
+
+{# 按钮宏 #}
+{% macro button(text, type='default', size='md', block=false, disabled=false, href=None, extra_classes='') %}
+{% set type_classes = {
+    'default': 'btn-default',
+    'primary': 'btn-primary',
+    'success': 'btn-success',
+    'info': 'btn-info',
+    'warning': 'btn-warning',
+    'danger': 'btn-danger',
+    'link': 'btn-link'
+} %}
+
+{% set size_classes = {
+    'xs': 'btn-xs',
+    'sm': 'btn-sm',
+    'md': '',
+    'lg': 'btn-lg'
+} %}
+
+{% set base_classes = 'btn ' + type_classes[type] + ' ' + size_classes[size] %}
+{% if block %} {{ base_classes }} += ' btn-block' {% endif %}
+{% if extra_classes %} {{ base_classes }} += ' ' + extra_classes {% endif %}
+
+{% if href %}
+<a href="{{ href }}" class="{{ base_classes }}" {% if disabled %}disabled="disabled"{% endif %}>
+    {{ text }}
+</a>
+{% else %}
+<button type="button" class="{{ base_classes }}" {% if disabled %}disabled="disabled"{% endif %}>
+    {{ text }}
+</button>
+{% endif %}
+{% endmacro %}
+
+{# 卡片宏 #}
+{% macro card(title=None, content='', footer=None, classes='') %}
+<div class="card {{ classes }}">
+    {% if title %}
+    <div class="card-header">
+        <h3 class="card-title">{{ title }}</h3>
+    </div>
+    {% endif %}
+    
+    {% if content %}
+    <div class="card-body">
+        {{ content }}
+    </div>
+    {% endif %}
+    
+    {% if footer %}
+    <div class="card-footer">
+        {{ footer }}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# 警告框宏 #}
+{% macro alert(message, type='info', dismissible=false) %}
+{% set type_classes = {
+    'info': 'alert-info',
+    'success': 'alert-success',
+    'warning': 'alert-warning',
+    'danger': 'alert-danger'
+} %}
+
+<div class="alert {{ type_classes[type] }}{% if dismissible %} alert-dismissible{% endif %}" role="alert">
+    {% if dismissible %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {% endif %}
+    {{ message }}
+</div>
+{% endmacro %}
+
+{# 表单输入字段宏 #}
+{% macro input_field(name, type='text', label='', value='', placeholder='', required=false, help_text='') %}
+<div class="form-group">
+    {% if label %}
+    <label for="{{ name }}">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+    {% endif %}
+    
+    <input 
+        type="{{ type }}" 
+        id="{{ name }}" 
+        name="{{ name }}" 
+        value="{{ value }}" 
+        placeholder="{{ placeholder }}" 
+        class="form-control"
+        {% if required %}required{% endif %}
+    >
+    
+    {% if help_text %}
+    <small class="form-text text-muted">{{ help_text }}</small>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# 文本域宏 #}
+{% macro textarea(name, label='', value='', rows=4, placeholder='', required=false, help_text='') %}
+<div class="form-group">
+    {% if label %}
+    <label for="{{ name }}">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+    {% endif %}
+    
+    <textarea 
+        id="{{ name }}" 
+        name="{{ name }}" 
+        rows="{{ rows }}" 
+        placeholder="{{ placeholder }}" 
+        class="form-control"
+        {% if required %}required{% endif %}
+    >{{ value }}</textarea>
+    
+    {% if help_text %}
+    <small class="form-text text-muted">{{ help_text }}</small>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# 选择框宏 #}
+{% macro select_field(name, label='', options=[], selected='', required=false, help_text='') %}
+<div class="form-group">
+    {% if label %}
+    <label for="{{ name }}">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+    {% endif %}
+    
+    <select 
+        id="{{ name }}" 
+        name="{{ name }}" 
+        class="form-control"
+        {% if required %}required{% endif %}
+    >
+        {% for key, value in options.items() %}
+        <option value="{{ key }}" {% if key == selected %}selected{% endif %}>{{ value }}</option>
+        {% endfor %}
+    </select>
+    
+    {% if help_text %}
+    <small class="form-text text-muted">{{ help_text }}</small>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# 复选框宏 #}
+{% macro checkbox(name, label='', checked=false, required=false) %}
+<div class="form-check">
+    <input 
+        type="checkbox" 
+        id="{{ name }}" 
+        name="{{ name }}" 
+        class="form-check-input"
+        {% if checked %}checked{% endif %}
+        {% if required %}required{% endif %}
+    >
+    <label class="form-check-label" for="{{ name }}">{{ label }}</label>
+</div>
+{% endmacro %}
+
+{# 单选框宏 #}
+{% macro radio(name, value, label='', checked=false) %}
+<div class="form-check">
+    <input 
+        type="radio" 
+        id="{{ name }}_{{ value }}" 
+        name="{{ name }}" 
+        value="{{ value }}" 
+        class="form-check-input"
+        {% if checked %}checked{% endif %}
+    >
+    <label class="form-check-label" for="{{ name }}_{{ value }}">{{ label }}</label>
+</div>
+{% endmacro %}
+
+{# 列表渲染宏 #}
+{% macro render_list(items, ordered=false, classes='') %}
+{% if ordered %}
+<ol class="{{ classes }}">
+{% else %}
+<ul class="{{ classes }}">
+{% endif %}
+    {% for item in items %}
+    <li>{{ item }}</li>
+    {% else %}
+    <li>列表为空</li>
+    {% endfor %}
+{% if ordered %}
+</ol>
+{% else %}
+</ul>
+{% endif %}
+{% endmacro %}
+
+{# 表格宏 #}
+{% macro render_table(headers, rows, classes='', responsive=true) %}
+{% if responsive %}<div class="table-responsive">{% endif %}
+<table class="table {{ classes }}">
+    <thead>
+        <tr>
+            {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            {% for cell in row %}
+            <td>{{ cell }}</td>
+            {% endfor %}
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="{{ headers|length }}" class="text-center">暂无数据</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if responsive %}</div>{% endif %}
+{% endmacro %}
+
+{# 分页宏 #}
+{% macro pagination(current_page, total_pages, base_url, show_edges=true) %}
+{% if total_pages > 1 %}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if show_edges %}
+        <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ base_url }}1" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        {% endif %}
+        
+        <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ base_url }}{{ current_page - 1 }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        
+        {% for page in range(1, total_pages + 1) %}
+        {% if (page == 1 or page == total_pages) or (page >= current_page - 2 and page <= current_page + 2) %}
+        <li class="page-item {% if page == current_page %}active{% endif %}">
+            <a class="page-link" href="{{ base_url }}{{ page }}">{{ page }}</a>
+        </li>
+        {% elif page == current_page - 3 or page == current_page + 3 %}
+        <li class="page-item disabled">
+            <span class="page-link">...</span>
+        </li>
+        {% endif %}
+        {% endfor %}
+        
+        <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ base_url }}{{ current_page + 1 }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        
+        {% if show_edges %}
+        <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ base_url }}{{ total_pages }}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endmacro %}
+
+{# 徽章宏 #}
+{% macro badge(text, type='default', pill=false) %}
+<span class="badge{% if pill %} badge-pill{% endif %} badge-{{ type }}">
+    {{ text }}
+</span>
+{% endmacro %}
+
+{# 进度条宏 #}
+{% macro progress_bar(value, max=100, type='primary', label=false) %}
+<div class="progress">
+    <div class="progress-bar bg-{{ type }}" role="progressbar" style="width: {{ value }}%" aria-valuenow="{{ value }}" aria-valuemin="0" aria-valuemax="{{ max }}">
+        {% if label %}{{ value }}%{% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{# 面板宏 #}
+{% macro panel(title, content, type='default', footer=None) %}
+<div class="panel panel-{{ type }}">
+    {% if title %}
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}</h3>
+    </div>
+    {% endif %}
+    
+    <div class="panel-body">
+        {{ content }}
+    </div>
+    
+    {% if footer %}
+    <div class="panel-footer">
+        {{ footer }}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# 模态框宏 #}
+{% macro modal(id, title, content, footer=None, size='md', centered=false) %}
+<div class="modal fade" id="{{ id }}" tabindex="-1" role="dialog" aria-labelledby="{{ id }}Label">
+    <div class="modal-dialog{% if size != 'md' %} modal-{{ size }}{% endif %}{% if centered %} modal-dialog-centered{% endif %}" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{{ id }}Label">{{ title }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{ content }}
+            </div>
+            {% if footer %}
+            <div class="modal-footer">
+                {{ footer }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{# 面包屑导航宏 #}
+{% macro breadcrumb(items) %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for item in items %}
+        {% if loop.last %}
+        <li class="breadcrumb-item active" aria-current="page">{{ item.text }}</li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.text }}</a></li>
+        {% endif %}
+        {% endfor %}
+    </ol>
+</nav>
+{% endmacro %}
+
+{# 时间格式化宏 #}
+{% macro format_time(datetime, format='%Y-%m-%d %H:%M:%S') %}
+{{ datetime.strftime(format) if datetime else '' }}
+{% endmacro %}
+
+{# 货币格式化宏 #}
+{% macro format_currency(amount, currency='¥') %}
+{{ currency }}{{ amount|round(2) }}
+{% endmacro %}
+
+<style>
+    /* 组件基础样式 */
+    .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    
+    .btn-default {
+        color: #333;
+        background-color: #fff;
+        border-color: #ccc;
+    }
+    
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .btn-info {
+        color: #fff;
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+    
+    .btn-warning {
+        color: #212529;
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .btn-danger {
+        color: #fff;
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    
+    .btn-link {
+        color: #007bff;
+        background-color: transparent;
+        border-color: transparent;
+    }
+    
+    .btn-block {
+        display: block;
+        width: 100%;
+    }
+    
+    .btn-xs {
+        padding: 1px 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+    
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+    
+    .btn-lg {
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.3333333;
+        border-radius: 6px;
+    }
+    
+    .card {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: .25rem;
+    }
+    
+    .card-header {
+        padding: .75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0,0,0,.03);
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+    
+    .card-body {
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+    }
+    
+    .card-footer {
+        padding: .75rem 1.25rem;
+        background-color: rgba(0,0,0,.03);
+        border-top: 1px solid rgba(0,0,0,.125);
+    }
+    
+    .alert {
+        padding: .75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+    }
+    
+    .alert-info {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+    }
+    
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    
+    .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeaa7;
+    }
+    
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    
+    .form-check {
+        position: relative;
+        display: block;
+        padding-left: 1.25rem;
+    }
+    
+    .form-check-input {
+        position: absolute;
+        margin-top: .3rem;
+        margin-left: -1.25rem;
+    }
+    
+    .form-check-label {
+        margin-bottom: 0;
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse;
+    }
+    
+    .table th,
+    .table td {
+        padding: .75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: .25em .4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25rem;
+    }
+    
+    .badge-pill {
+        padding-right: .6em;
+        padding-left: .6em;
+        border-radius: 10rem;
+    }
+    
+    .badge-primary {
+        color: #fff;
+        background-color: #007bff;
+    }
+    
+    .badge-secondary {
+        color: #fff;
+        background-color: #6c757d;
+    }
+    
+    .badge-success {
+        color: #fff;
+        background-color: #28a745;
+    }
+    
+    .badge-info {
+        color: #fff;
+        background-color: #17a2b8;
+    }
+    
+    .badge-warning {
+        color: #212529;
+        background-color: #ffc107;
+    }
+    
+    .badge-danger {
+        color: #fff;
+        background-color: #dc3545;
+    }
+    
+    .badge-default {
+        color: #fff;
+        background-color: #6c757d;
+    }
+    
+    .progress {
+        display: -ms-flexbox;
+        display: flex;
+        height: 1rem;
+        overflow: hidden;
+        font-size: .75rem;
+        background-color: #e9ecef;
+        border-radius: .25rem;
+    }
+    
+    .progress-bar {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -ms-flex-pack: center;
+        justify-content: center;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        background-color: #007bff;
+        transition: width .6s ease;
+    }
+    
+    .bg-primary {
+        background-color: #007bff !important;
+    }
+    
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+    
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+    
+    .bg-info {
+        background-color: #17a2b8 !important;
+    }
+    
+    .bg-warning {
+        background-color: #ffc107 !important;
+    }
+    
+    .bg-danger {
+        background-color: #dc3545 !important;
+    }
+    
+    .pagination {
+        display: -ms-flexbox;
+        display: flex;
+        padding-left: 0;
+        list-style: none;
+        border-radius: .25rem;
+    }
+    
+    .page-item {
+        margin-right: .25rem;
+    }
+    
+    .page-link {
+        position: relative;
+        display: block;
+        padding: .5rem .75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+    }
+    
+    .page-item.active .page-link {
+        z-index: 1;
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        cursor: auto;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
+    
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+        background-color: rgba(0,0,0,.5);
+    }
+    
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: .5rem;
+        pointer-events: none;
+    }
+    
+    .modal-content {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.2);
+        border-radius: .3rem;
+        outline: 0;
+    }
+    
+    .modal-header {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: start;
+        align-items: flex-start;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        border-top-left-radius: calc(.3rem - 1px);
+        border-top-right-radius: calc(.3rem - 1px);
+    }
+    
+    .modal-body {
+        position: relative;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: end;
+        justify-content: flex-end;
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .modal-title {
+        margin-bottom: 0;
+        line-height: 1.5;
+    }
+    
+    .close {
+        float: right;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        text-shadow: 0 1px 0 #fff;
+        opacity: .5;
+    }
+    
+    .breadcrumb {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        padding: .75rem 1rem;
+        margin-bottom: 1rem;
+        list-style: none;
+        background-color: #e9ecef;
+        border-radius: .25rem;
+    }
+    
+    .breadcrumb-item {
+        display: inline-block;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item {
+        padding-left: .5rem;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+        display: inline-block;
+        padding-right: .5rem;
+        color: #6c757d;
+        content: '/';
+    }
+    
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+    
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+</style>

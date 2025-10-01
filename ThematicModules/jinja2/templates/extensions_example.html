@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2扩展功能示例</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+        }
+        h1 {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .example-box {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f8f9fa;
+        }
+        .output {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .code {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .repeat-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 3px;
+        }
+        /* 调试模式样式 */
+        .debug-info {
+            background-color: #ffeaa7;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border: 1px dashed #d63031;
+        }
+        /* 缓存状态样式 */
+        .cache-status {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jinja2扩展功能示例</h1>
+    
+    <!-- 扩展功能介绍 -->
+    <div class="section">
+        <h2>扩展功能概述</h2>
+        <p>Jinja2的扩展系统允许开发者扩展模板语言的功能，添加新的标签、过滤器、测试和全局函数。本示例展示了多个自定义扩展的使用方法。</p>
+        <p>当前启用的扩展：</p>
+        <ul>
+            <li>文本处理扩展：提供文本截断、高亮、slugify等功能</li>
+            <li>重复标签扩展：提供<code>{% repeat %}</code>标签用于循环执行代码块</li>
+            <li>缓存块扩展：提供<code>{% cache %}</code>标签用于缓存模板块</li>
+            <li>调试扩展：提供调试工具和信息显示功能</li>
+        </ul>
+    </div>
+    
+    <!-- 文本处理扩展示例 -->
+    <div class="section">
+        <h2>1. 文本处理扩展</h2>
+        
+        <h3>文本截断</h3>
+        <div class="example-box">
+            <p>原始文本：{{ long_text }}</p>
+            <p>截断到10个词：{{ long_text | truncate_words(10) }}</p>
+            <p>截断到15个词并添加自定义后缀：{{ long_text | truncate_words(15, suffix='... [继续阅读]') }}</p>
+        </div>
+        
+        <h3>文本高亮</h3>
+        <div class="example-box">
+            <p>在文本中高亮'Jinja2'和'template'：</p>
+            <div class="output">
+                {{ long_text | highlight(['Jinja2', 'template']) }}
+            </div>
+        </div>
+        
+        <h3>生成Slug</h3>
+        <div class="example-box">
+            <p>标题：{{ page_title }}</p>
+            <p>生成的Slug：{{ page_title | slugify }}</p>
+            <p>自定义分隔符的Slug：{{ page_title | slugify('_') }}</p>
+        </div>
+        
+        <h3>首字母大写</h3>
+        <div class="example-box">
+            <p>原始文本：{{ "hello world of templates" }}</p>
+            <p>首字母大写：{{ "hello world of templates" | capitalize_words }}</p>
+        </div>
+    </div>
+    
+    <!-- 重复标签扩展示例 -->
+    <div class="section">
+        <h2>2. 重复标签扩展</h2>
+        
+        <h3>基础重复功能</h3>
+        <div class="example-box">
+            <p>生成5个按钮：</p>
+            {% repeat 5 %}
+                <button class="btn btn-primary">按钮 {{ loop.index }}</button>
+            {% endrepeat %}
+        </div>
+        
+        <h3>使用循环变量</h3>
+        <div class="example-box">
+            <p>带循环信息的重复块：</p>
+            {% repeat 4 %}
+                <div class="repeat-item">
+                    项目 {{ loop.index }}/{{ loop.length }} - 
+                    {% if loop.first %}第一个{% elif loop.last %}最后一个{% else %}中间的{% endif %}
+                </div>
+            {% endrepeat %}
+        </div>
+        
+        <h3>动态重复次数</h3>
+        <div class="example-box">
+            <p>根据变量动态生成元素：</p>
+            {% repeat item_count %}
+                <span class="btn btn-secondary">动态项目 {{ loop.index }}</span>
+            {% endrepeat %}
+        </div>
+    </div>
+    
+    <!-- 缓存块扩展示例 -->
+    <div class="section">
+        <h2>3. 缓存块扩展</h2>
+        
+        <h3>基础缓存功能</h3>
+        <div class="example-box">
+            <p>这个内容块被缓存：</p>
+            {% cache 'sample_block' %}
+                <div class="cache-status">
+                    缓存生成时间：{{ current_time }}
+                </div>
+                <p>这里是一些可能需要缓存的内容，例如从数据库获取的数据或复杂的计算结果。</p>
+                <p>缓存键：sample_block</p>
+            {% endcache %}
+        </div>
+        
+        <h3>带超时的缓存</h3>
+        <div class="example-box">
+            <p>这个内容块被缓存，但有300秒的超时时间：</p>
+            {% cache 'time_sensitive_block', 300 %}
+                <div class="cache-status">
+                    时间敏感缓存生成时间：{{ current_time }}
+                    （300秒后过期）
+                </div>
+                <p>这里是一些需要定期更新的内容，例如新闻摘要或统计数据。</p>
+            {% endcache %}
+        </div>
+        
+        <h3>带动态键的缓存</h3>
+        <div class="example-box">
+            <p>使用动态键缓存不同用户的内容：</p>
+            {% cache 'user_specific_block_' ~ user_id %}
+                <div class="cache-status">
+                    用户特定缓存生成时间：{{ current_time }}
+                </div>
+                <p>为用户 {{ user_id }} 定制的内容。</p>
+            {% endcache %}
+        </div>
+    </div>
+    
+    <!-- 调试扩展示例 -->
+    <div class="section">
+        <h2>4. 调试扩展</h2>
+        
+        <h3>调试块</h3>
+        <div class="example-box">
+            <p>使用调试块查看渲染时间：</p>
+            {% debug 'test_block' %}
+                <p>这是一个简单的段落内容。</p>
+                <p>调试块会自动记录渲染时间和错误信息。</p>
+            {% enddebug %}
+        </div>
+        
+        <h3>变量转储</h3>
+        <div class="example-box">
+            <p>转储产品列表变量的信息：</p>
+            {% dump products %}
+            <!-- 注意：变量转储的输出通常会作为HTML注释显示在页面源代码中 -->
+        </div>
+        
+        <h3>性能计时</h3>
+        <div class="example-box">
+            <p>测量复杂操作的执行时间：</p>
+            {% timeit 'complex_operation' %}
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>价格</th>
+                        <th>库存</th>
+                    </tr>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.id }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.price }}</td>
+                            <td>{{ product.stock }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endtimeit %}
+            <!-- 注意：计时信息通常会作为HTML注释显示在页面源代码中 -->
+        </div>
+        
+        <h3>调试过滤器</h3>
+        <div class="example-box">
+            <p>使用调试过滤器检查变量类型：</p>
+            <p>products变量的类型：{{ products | type_of }}</p>
+            <p>第一个产品的类型：{{ products[0] | type_of }}</p>
+        </div>
+    </div>
+    
+    <!-- 综合应用示例 -->
+    <div class="section">
+        <h2>5. 综合应用示例</h2>
+        
+        <h3>产品列表页面</h3>
+        <div class="example-box">
+            <!-- 使用缓存块缓存整个产品列表 -->
+            {% cache 'product_list_' ~ page_num, 600 %}
+                <h4>产品列表（第 {{ page_num }} 页）</h4>
+                
+                <!-- 使用调试块监控渲染性能 -->
+                {% debug 'product_table' %}
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>描述</th>
+                            <th>价格</th>
+                            <th>库存状态</th>
+                        </tr>
+                        {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description | truncate_words(10) }}</td>
+                                <td>{{ product.price }}</td>
+                                <td>
+                                    {% if product.stock > 0 %}
+                                        <span class="btn btn-success">有货</span>
+                                    {% else %}
+                                        <span class="btn btn-secondary">缺货</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% enddebug %}
+                
+                <!-- 使用重复标签生成分页按钮 -->
+                <div>
+                    <p>分页导航：</p>
+                    {% repeat total_pages %}
+                        {% if loop.index == page_num %}
+                            <span class="btn btn-primary">{{ loop.index }}</span>
+                        {% else %}
+                            <span class="btn btn-secondary">{{ loop.index }}</span>
+                        {% endif %}
+                    {% endrepeat %}
+                </div>
+            {% endcache %}
+        </div>
+    </div>
+    
+    <!-- 技术说明 -->
+    <div class="section">
+        <h2>扩展开发技术说明</h2>
+        <p>本示例中使用的所有扩展都是通过继承Jinja2的Extension基类实现的。每个扩展都遵循以下基本结构：</p>
+        <div class="code">
+# 扩展的基本结构示例
+from jinja2.ext import Extension
+
+class MyExtension(Extension):
+    # 扩展名称
+    name = 'my_extension'
+    
+    # 定义处理的标签
+    tags = {'mytag'}
+    
+    def __init__(self, environment):
+        super().__init__(environment)
+        # 注册过滤器、测试或全局函数
+        environment.filters['myfilter'] = self.my_filter
+        
+    def parse(self, parser):
+        # 解析模板中的自定义标签
+        token = next(parser.stream)
+        # 实现解析逻辑
+        
+    def my_filter(self, value):
+        # 实现过滤器逻辑
+        return processed_value
+        </div>
+    </div>
+</body>
+</html>

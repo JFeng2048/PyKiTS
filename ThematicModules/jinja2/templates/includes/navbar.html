@@ -1,0 +1,129 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <a href="#" class="navbar-logo">Jinja2学习中心</a>
+        </div>
+        
+        <ul class="navbar-menu">
+            <li class="navbar-item">
+                <a href="#home" class="navbar-link">首页</a>
+            </li>
+            <li class="navbar-item">
+                <a href="#about" class="navbar-link">关于我们</a>
+            </li>
+            <li class="navbar-item">
+                <a href="#docs" class="navbar-link">文档</a>
+            </li>
+            <li class="navbar-item">
+                <a href="#examples" class="navbar-link">示例</a>
+            </li>
+            <li class="navbar-item">
+                <a href="#contact" class="navbar-link">联系我们</a>
+            </li>
+        </ul>
+        
+        <div class="navbar-actions">
+            {% if user.is_authenticated %}
+                <span class="navbar-user">欢迎，{{ user.username }}</span>
+                <a href="#logout" class="navbar-button">退出</a>
+            {% else %}
+                <a href="#login" class="navbar-button">登录</a>
+                <a href="#register" class="navbar-button">注册</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* 导航栏样式 */
+    .navbar {
+        width: 100%;
+        position: relative;
+    }
+    
+    .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+    }
+    
+    .navbar-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    .navbar-menu {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .navbar-item {
+        margin-left: 20px;
+    }
+    
+    .navbar-link {
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    .navbar-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .navbar-actions {
+        display: flex;
+        align-items: center;
+    }
+    
+    .navbar-user {
+        color: #fff;
+        margin-right: 15px;
+    }
+    
+    .navbar-button {
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 16px;
+        border: 1px solid #fff;
+        border-radius: 4px;
+        margin-left: 10px;
+        transition: all 0.3s;
+    }
+    
+    .navbar-button:hover {
+        background-color: #fff;
+        color: #333;
+    }
+    
+    /* 响应式导航栏 */
+    @media (max-width: 768px) {
+        .navbar-container {
+            flex-direction: column;
+        }
+        
+        .navbar-menu {
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .navbar-item {
+            margin: 5px;
+        }
+    }
+</style>

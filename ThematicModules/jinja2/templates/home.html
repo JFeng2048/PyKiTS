@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - Jinja2学习中心{% endblock %}
+
+{% block meta %}
+    <meta name="description" content="Jinja2学习中心首页，提供Jinja2模板引擎的学习资源和示例">
+{% endblock %}
+
+{% block css %}
+    {{ super() }}
+    <!-- 首页特定CSS -->
+    <style>
+        /* 首页样式 */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .feature-card h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .cta-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+            text-align: center;
+            border-radius: 8px;
+        }
+        
+        .cta-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .cta-section p {
+            margin-bottom: 30px;
+            color: #666;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .cta-buttons .btn {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+        }
+        
+        .btn-primary {
+            background-color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <h1>掌握Jinja2模板引擎</h1>
+            <p>从基础到高级，全面学习Python Web开发中最强大的模板系统。</p>
+            <div class="cta-buttons">
+                <a href="#docs" class="btn btn-primary">开始学习</a>
+                <a href="#examples" class="btn btn-secondary">查看示例</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 特色功能 -->
+    <section class="features">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px; color: #333;">为什么选择Jinja2？</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>强大的模板继承</h3>
+                    <p>使用模板继承创建一致的页面布局，减少重复代码，提高可维护性。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>丰富的过滤器</h3>
+                    <p>内置多种过滤器，轻松处理字符串、数字、列表等数据类型的转换和格式化。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>灵活的控制结构</h3>
+                    <p>支持条件语句、循环结构、宏等高级功能，满足复杂页面逻辑需求。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>安全的模板渲染</h3>
+                    <p>自动转义HTML内容，防止XSS攻击，确保Web应用的安全性。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>可扩展性</h3>
+                    <p>支持自定义过滤器、测试器和扩展，根据项目需求进行功能扩展。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>广泛应用</h3>
+                    <p>被Flask、Django(可选)等流行Web框架采用，是Python Web开发的标准工具。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 行动召唤 -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>准备好开始你的Jinja2学习之旅了吗？</h2>
+            <p>无论你是初学者还是有经验的开发者，这里都有适合你的学习资源和示例代码。</p>
+            <div class="cta-buttons">
+                <a href="#tutorials" class="btn btn-primary">浏览教程</a>
+                <a href="#exercises" class="btn btn-secondary">做练习</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <!-- 首页特定JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为特性卡片添加动画效果
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            // 简单的滚动动画
+            function animateOnScroll() {
+                featureCards.forEach(card => {
+                    const cardTop = card.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (cardTop < windowHeight * 0.85) {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+            
+            // 初始设置
+            featureCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            });
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', animateOnScroll);
+            
+            // 初始触发一次
+            animateOnScroll();
+        });
+    </script>
+{% endblock %}

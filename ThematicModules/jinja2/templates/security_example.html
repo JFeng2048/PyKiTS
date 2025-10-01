@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2 安全性示例</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+        }
+        h1 {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .example-box {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f8f9fa;
+        }
+        .code {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+        .output {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .safe {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .unsafe {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        pre {
+            margin: 10px 0;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .variable-name {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .filter-name {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jinja2 安全性示例</h1>
+    
+    <!-- 介绍部分 -->
+    <div class="section">
+        <h2>安全性概述</h2>
+        <p>Jinja2 作为一个强大的模板引擎，在处理用户输入和动态内容时需要特别注意安全问题。本示例将展示 Jinja2 中的安全特性和最佳实践，帮助您构建更安全的 Web 应用。</p>
+        <div class="note">
+            <strong>重要提示：</strong> 本示例包含一些不安全的代码用法，仅用于演示目的。在实际生产环境中，请严格遵循安全最佳实践。
+        </div>
+    </div>
+    
+    <!-- 自动转义示例 -->
+    <div class="section">
+        <h2>1. 自动转义功能</h2>
+        
+        <h3>基本转义示例</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 用户提交了包含 HTML/JavaScript 代码的评论</p>
+            <div class="code">
+                <!-- 用户输入: <script>alert('XSS Attack!');</script> -->
+                <span class="variable-name">user_input</span> = "&lt;script&gt;alert('XSS Attack!');&lt;/script&gt;"
+            </div>
+            
+            <p><strong>默认自动转义 (安全):</strong></p>
+            <div class="code">
+                {{ user_input }}
+            </div>
+            <div class="output">
+                {{ user_input }}
+            </div>
+            <div class="safe">
+                ✓ 安全：HTML 标签被转义，不会执行 JavaScript 代码
+            </div>
+            
+            <p><strong>使用 safe 过滤器 (不安全):</strong></p>
+            <div class="code">
+                {{ user_input|safe }}
+            </div>
+            <div class="output">
+                <!-- 注意：在实际渲染时，这里可能会执行 JavaScript 代码 -->
+                {{ user_input|safe }}
+            </div>
+            <div class="unsafe">
+                ✗ 不安全：使用 <span class="filter-name">safe</span> 过滤器禁用了转义，可能导致 XSS 攻击
+            </div>
+        </div>
+        
+        <h3>自动转义的特殊字符</h3>
+        <div class="example-box">
+            <table>
+                <tr>
+                    <th>原始字符</th>
+                    <th>转义后</th>
+                    <th>描述</th>
+                </tr>
+                <tr>
+                    <td>&lt;</td>
+                    <td>&amp;lt;</td>
+                    <td>小于号</td>
+                </tr>
+                <tr>
+                    <td>&gt;</td>
+                    <td>&amp;gt;</td>
+                    <td>大于号</td>
+                </tr>
+                <tr>
+                    <td>&amp;</td>
+                    <td>&amp;amp;</td>
+                    <td>和号</td>
+                </tr>
+                <tr>
+                    <td>"</td>
+                    <td>&amp;quot;</td>
+                    <td>双引号</td>
+                </tr>
+                <tr>
+                    <td>'</td>
+                    <td>&amp;#39;</td>
+                    <td>单引号</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h3>raw 块的使用</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 需要在模板中包含原始 HTML 或 JavaScript 代码</p>
+            <div class="code">
+                {% raw %}
+                &lt;script&gt;
+                    var data = {{ json_data }};
+                    function initApp() {
+                        console.log('Application initialized');
+                    }
+                &lt;/script&gt;
+                {% endraw %}
+            </div>
+            <div class="note">
+                <strong>注意：</strong> 使用 <code>{% raw %}</code> 块时要格外小心，确保其中的内容是完全可信的。
+            </div>
+        </div>
+    </div>
+    
+    <!-- 安全变量使用 -->
+    <div class="section">
+        <h2>2. 安全的变量使用</h2>
+        
+        <h3>限制变量访问</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 显示用户信息，但不暴露敏感数据</p>
+            
+            <p><strong>不安全的做法：</strong> 传递整个用户对象</p>
+            <div class="code">
+                <!-- 不安全的变量传递 -->
+                {{ user }}
+            </div>
+            <div class="output">
+                {{ user }}
+            </div>
+            <div class="unsafe">
+                ✗ 不安全：可能会暴露用户的敏感信息
+            </div>
+            
+            <p><strong>安全的做法：</strong> 只传递必要的字段</p>
+            <div class="code">
+                <!-- 安全的变量传递 -->
+                用户名: {{ user.username }}<br>
+                邮箱: {{ user.email }}<br>
+                注册日期: {{ user.registered_at }}
+            </div>
+            <div class="output">
+                用户名: {{ user.username }}<br>
+                邮箱: {{ user.email }}<br>
+                注册日期: {{ user.registered_at }}
+            </div>
+            <div class="safe">
+                ✓ 安全：只显示必要的用户信息，不暴露敏感数据
+            </div>
+        </div>
+        
+        <h3>敏感数据掩码</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 需要显示部分敏感数据，但保护隐私</p>
+            
+            <p><strong>示例：</strong> 信用卡号掩码</p>
+            <div class="code">
+                信用卡号: {{ credit_card|mask_credit_card }}
+            </div>
+            <div class="output">
+                信用卡号: {{ credit_card|mask_credit_card }}
+            </div>
+            
+            <p><strong>示例：</strong> 邮箱地址掩码</p>
+            <div class="code">
+                邮箱: {{ email|mask_email }}
+            </div>
+            <div class="output">
+                邮箱: {{ email|mask_email }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 安全的过滤器和函数 -->
+    <div class="section">
+        <h2>3. 安全的过滤器和函数</h2>
+        
+        <h3>自定义安全过滤器</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 创建一个安全的文本截断过滤器</p>
+            
+            <p><strong>示例：</strong> 安全截断用户评论</p>
+            <div class="code">
+                <!-- 用户评论: 这是一个很长的评论，可能包含一些不安全的内容，如 <script>alert('XSS');</script> 标签 -->
+                {{ long_comment|safe_truncate(50) }}
+            </div>
+            <div class="output">
+                {{ long_comment|safe_truncate(50) }}
+            </div>
+            <div class="safe">
+                ✓ 安全：内容被截断并转义，避免了 XSS 风险
+            </div>
+        </div>
+        
+        <h3>安全的 URL 处理</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 处理用户提供的 URL</p>
+            
+            <p><strong>示例：</strong> 安全的 URL 构建</p>
+            <div class="code">
+                <a href="{{ user_url|safe_url }}">访问用户页面</a>
+            </div>
+            <div class="output">
+                <a href="{{ user_url|safe_url }}">访问用户页面</a>
+            </div>
+            
+            <p><strong>恶意 URL 示例：</strong></p>
+            <div class="code">
+                <!-- 恶意 URL: javascript:alert('XSS') -->
+                <a href="{{ malicious_url|safe_url }}">危险链接</a>
+            </div>
+            <div class="output">
+                <a href="{{ malicious_url|safe_url }}">危险链接</a>
+            </div>
+            <div class="safe">
+                ✓ 安全：危险的 URL 协议被过滤
+            </div>
+        </div>
+    </div>
+    
+    <!-- 沙箱模式 -->
+    <div class="section">
+        <h2>4. 沙箱模式</h2>
+        
+        <div class="example-box">
+            <p><strong>场景：</strong> 当需要渲染不可信的模板时，使用沙箱模式限制安全风险</p>
+            
+            <p><strong>沙箱模式的安全限制：</strong></p>
+            <ul>
+                <li>限制对危险属性和方法的访问（如 <code>__class__</code>, <code>__subclasses__</code> 等）</li>
+                <li>防止目录遍历攻击</li>
+                <li>限制循环迭代次数</li>
+                <li>限制递归深度</li>
+            </ul>
+            
+            <div class="code">
+                <!-- 沙箱环境中的安全评估 -->
+                {% set restricted_value = {'_hidden': 'secret'} %}
+                尝试访问危险属性: {{ restricted_value._hidden }}
+            </div>
+            <div class="output">
+                尝试访问危险属性: {{ restricted_value._hidden }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 模板文件安全 -->
+    <div class="section">
+        <h2>5. 模板文件安全</h2>
+        
+        <h3>防止目录遍历</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 用户尝试访问模板目录外的文件</p>
+            
+            <p><strong>恶意请求示例：</strong></p>
+            <div class="code">
+                <!-- 恶意请求: ../config/database.yml -->
+                尝试访问敏感文件: {{ malicious_template_path }}
+            </div>
+            <div class="output">
+                尝试访问敏感文件: {{ malicious_template_path }}
+            </div>
+            <div class="safe">
+                ✓ 安全：目录遍历尝试被阻止
+            </div>
+        </div>
+        
+        <h3>安全的模板缓存</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 配置安全的模板缓存策略</p>
+            
+            <p><strong>缓存配置最佳实践：</strong></p>
+            <ul>
+                <li>设置合理的缓存大小限制</li>
+                <li>定期清理缓存</li>
+                <li>避免在缓存中存储敏感数据</li>
+                <li>生产环境开启缓存，开发环境关闭或启用自动重载</li>
+            </ul>
+            
+            <div class="code">
+                <!-- 缓存状态信息 -->
+                缓存状态: {{ cache_status }}
+            </div>
+            <div class="output">
+                缓存状态: {{ cache_status }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 错误处理和调试 -->
+    <div class="section">
+        <h2>6. 安全的错误处理和调试</h2>
+        
+        <h3>安全的错误显示</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 在生产环境中处理模板错误</p>
+            
+            <p><strong>开发环境 (详细错误):</strong></p>
+            <div class="code">
+                <!-- 开发环境中的错误显示 -->
+                {{ debug_error }}
+            </div>
+            <div class="output">
+                {{ debug_error }}
+            </div>
+            
+            <p><strong>生产环境 (友好错误):</strong></p>
+            <div class="code">
+                <!-- 生产环境中的错误显示 -->
+                {{ production_error }}
+            </div>
+            <div class="output">
+                {{ production_error }}
+            </div>
+            <div class="safe">
+                ✓ 安全：在生产环境中不暴露详细错误信息
+            </div>
+        </div>
+        
+        <h3>调试信息保护</h3>
+        <div class="example-box">
+            <p><strong>场景：</strong> 确保调试信息不会泄露到生产环境</p>
+            
+            <div class="warning">
+                <strong>警告：</strong> 在生产环境中，确保禁用调试模式，不显示堆栈跟踪和变量内容等敏感信息。
+            </div>
+            
+            <div class="code">
+                <!-- 调试模式配置 -->
+                调试模式: {{ debug_mode }}
+                <br>
+                环境类型: {{ environment_type }}
+            </div>
+            <div class="output">
+                调试模式: {{ debug_mode }}
+                <br>
+                环境类型: {{ environment_type }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 安全最佳实践 -->
+    <div class="section">
+        <h2>7. 安全最佳实践总结</h2>
+        
+        <div class="example-box">
+            <h3>开发阶段</h3>
+            <ol>
+                <li><strong>始终启用自动转义</strong>，特别是处理用户输入时</li>
+                <li><strong>使用沙箱环境</strong>运行不可信的模板</li>
+                <li><strong>限制模板中可用的变量和函数</strong></li>
+                <li><strong>对所有用户输入进行验证和清理</strong></li>
+                <li><strong>避免在模板中直接执行动态生成的内容</strong></li>
+                <li><strong>实施严格的路径验证</strong>，防止目录遍历攻击</li>
+                <li><strong>不将敏感信息传递给模板</strong></li>
+            </ol>
+            
+            <h3>部署阶段</h3>
+            <ol>
+                <li><strong>在生产环境中禁用调试模式</strong></li>
+                <li><strong>配置适当的模板缓存策略</strong></li>
+                <li><strong>限制模板加载器的搜索路径</strong></li>
+                <li><strong>使用环境变量或配置文件存储敏感信息</strong></li>
+                <li><strong>定期更新Jinja2到最新版本</strong></li>
+                <li><strong>实施输入输出日志记录</strong>，便于安全审计</li>
+                <li><strong>进行安全测试</strong>，包括XSS和模板注入测试</li>
+            </ol>
+        </div>
+    </div>
+    
+    <!-- 示例代码 -->
+    <div class="section">
+        <h2>8. 安全代码示例</h2>
+        
+        <h3>安全的Jinja2环境配置</h3>
+        <div class="example-box">
+            <div class="code">
+# 创建安全的Jinja2环境
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2.sandbox import SandboxedEnvironment
+
+def create_safe_environment(template_dir):
+    # 使用沙箱环境
+    env = SandboxedEnvironment(
+        # 启用自动转义
+        autoescape=select_autoescape(['html', 'xml', 'htm']),
+        # 设置模板加载器，限制搜索路径
+        loader=FileSystemLoader(template_dir),
+        # 配置其他安全选项
+        trim_blocks=True,
+        lstrip_blocks=True,
+        # 在生产环境中禁用调试
+        debug=False,
+        # 限制循环迭代次数
+        max_list_iterations=100,
+        # 限制递归深度
+        recursion_limit=10
+    )
+    
+    # 添加安全的全局函数和过滤器
+    env.globals['get_current_time'] = lambda: "当前时间会被安全处理"
+    
+    return env
+            </div>
+        </div>
+        
+        <h3>用户输入验证和清理</h3>
+        <div class="example-box">
+            <div class="code">
+# 安全处理用户输入
+def sanitize_user_input(input_data):
+    if not input_data:
+        return ''
+        
+    # 转换为字符串
+    input_str = str(input_data)
+    
+    # 移除潜在危险的HTML标签
+    import re
+    # 简单的标签移除（实际应用中应使用专门的HTML清理库）
+    clean_str = re.sub(r'<[^>]*>', '', input_str)
+    
+    # 限制长度
+    max_length = 1000
+    if len(clean_str) > max_length:
+        clean_str = clean_str[:max_length] + '...'
+    
+    return clean_str
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div class="section">
+        <h2>总结</h2>
+        <p>Jinja2 提供了多种安全特性，但安全是一个持续的过程，需要开发者始终保持警惕。通过遵循本示例中的最佳实践，您可以显著提高模板系统的安全性，减少潜在的安全风险。</p>
+        <div class="note">
+            <strong>提示：</strong> 安全没有银弹。除了模板安全外，还应该关注整个应用的安全，包括输入验证、输出编码、访问控制等多个方面。
+        </div>
+    </div>
+</body>
+</html>

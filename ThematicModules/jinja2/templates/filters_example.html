@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2变量和过滤器示例</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin-bottom: 30px; }
+        .filter-group { background-color: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .filter-name { font-weight: bold; color: #333; }
+        .code { background-color: #eee; padding: 5px; font-family: monospace; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Jinja2变量和过滤器示例</h1>
+    
+    <!-- 基本变量访问 -->
+    <div class="section">
+        <h2>1. 基本变量访问</h2>
+        <div class="filter-group">
+            <p class="filter-name">点表示法访问字典属性:</p>
+            <p>用户名: {{ user.username }}</p>
+            <p>邮箱: {{ user.email }}</p>
+            <p class="code">{{ '{{ user.username }}' }} 和 {{ '{{ user.email }}' }}</p>
+        </div>
+        
+        <div class="filter-group">
+            <p class="filter-name">下标表示法访问列表元素:</p>
+            <p>第一个爱好: {{ hobbies[0] }}</p>
+            <p>第二个爱好: {{ hobbies[1] }}</p>
+            <p class="code">{{ '{{ hobbies[0] }}' }} 和 {{ '{{ hobbies[1] }}' }}</p>
+        </div>
+    </div>
+    
+    <!-- 字符串过滤器 -->
+    <div class="section">
+        <h2>2. 字符串过滤器</h2>
+        <table>
+            <tr>
+                <th>过滤器</th>
+                <th>示例</th>
+                <th>结果</th>
+                <th>代码</th>
+            </tr>
+            <tr>
+                <td>upper</td>
+                <td>将字符串转换为大写</td>
+                <td>{{ message|upper }}</td>
+                <td class="code">{{ '{{ message|upper }}' }}</td>
+            </tr>
+            <tr>
+                <td>lower</td>
+                <td>将字符串转换为小写</td>
+                <td>{{ message|lower }}</td>
+                <td class="code">{{ '{{ message|lower }}' }}</td>
+            </tr>
+            <tr>
+                <td>capitalize</td>
+                <td>首字母大写</td>
+                <td>{{ message|capitalize }}</td>
+                <td class="code">{{ '{{ message|capitalize }}' }}</td>
+            </tr>
+            <tr>
+                <td>title</td>
+                <td>每个单词首字母大写</td>
+                <td>{{ message|title }}</td>
+                <td class="code">{{ '{{ message|title }}' }}</td>
+            </tr>
+            <tr>
+                <td>trim</td>
+                <td>去除首尾空白</td>
+                <td>{{ spaced_message|trim }}</td>
+                <td class="code">{{ '{{ spaced_message|trim }}' }}</td>
+            </tr>
+            <tr>
+                <td>length</td>
+                <td>获取字符串长度</td>
+                <td>{{ message|length }}</td>
+                <td class="code">{{ '{{ message|length }}' }}</td>
+            </tr>
+            <tr>
+                <td>replace</td>
+                <td>替换子串</td>
+                <td>{{ message|replace('world', 'Jinja2') }}</td>
+                <td class="code">{{ '{{ message|replace(\'world\', \'Jinja2\') }}' }}</td>
+            </tr>
+            <tr>
+                <td>default</td>
+                <td>变量未定义时使用默认值</td>
+                <td>{{ undefined_var|default('变量未定义') }}</td>
+                <td class="code">{{ '{{ undefined_var|default(\'变量未定义\') }}' }}</td>
+            </tr>
+            <tr>
+                <td>safe</td>
+                <td>输出原始HTML</td>
+                <td>{{ html_content|safe }}</td>
+                <td class="code">{{ '{{ html_content|safe }}' }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 数字过滤器 -->
+    <div class="section">
+        <h2>3. 数字过滤器</h2>
+        <table>
+            <tr>
+                <th>过滤器</th>
+                <th>示例</th>
+                <th>结果</th>
+                <th>代码</th>
+            </tr>
+            <tr>
+                <td>abs</td>
+                <td>绝对值</td>
+                <td>{{ negative_number|abs }}</td>
+                <td class="code">{{ '{{ negative_number|abs }}' }}</td>
+            </tr>
+            <tr>
+                <td>round</td>
+                <td>四舍五入(保留2位小数)</td>
+                <td>{{ pi|round(2) }}</td>
+                <td class="code">{{ '{{ pi|round(2) }}' }}</td>
+            </tr>
+            <tr>
+                <td>int</td>
+                <td>转换为整数</td>
+                <td>{{ string_number|int }}</td>
+                <td class="code">{{ '{{ string_number|int }}' }}</td>
+            </tr>
+            <tr>
+                <td>float</td>
+                <td>转换为浮点数</td>
+                <td>{{ string_float|float }}</td>
+                <td class="code">{{ '{{ string_float|float }}' }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 列表过滤器 -->
+    <div class="section">
+        <h2>4. 列表过滤器</h2>
+        <table>
+            <tr>
+                <th>过滤器</th>
+                <th>示例</th>
+                <th>结果</th>
+                <th>代码</th>
+            </tr>
+            <tr>
+                <td>first</td>
+                <td>第一个元素</td>
+                <td>{{ numbers|first }}</td>
+                <td class="code">{{ '{{ numbers|first }}' }}</td>
+            </tr>
+            <tr>
+                <td>last</td>
+                <td>最后一个元素</td>
+                <td>{{ numbers|last }}</td>
+                <td class="code">{{ '{{ numbers|last }}' }}</td>
+            </tr>
+            <tr>
+                <td>length</td>
+                <td>列表长度</td>
+                <td>{{ numbers|length }}</td>
+                <td class="code">{{ '{{ numbers|length }}' }}</td>
+            </tr>
+            <tr>
+                <td>sort</td>
+                <td>排序</td>
+                <td>{{ unsorted_numbers|sort }}</td>
+                <td class="code">{{ '{{ unsorted_numbers|sort }}' }}</td>
+            </tr>
+            <tr>
+                <td>join</td>
+                <td>连接成字符串</td>
+                <td>{{ hobbies|join(', ') }}</td>
+                <td class="code">{{ '{{ hobbies|join(\', \') }}' }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 字典过滤器 -->
+    <div class="section">
+        <h2>5. 字典过滤器</h2>
+        <table>
+            <tr>
+                <th>过滤器</th>
+                <th>示例</th>
+                <th>结果</th>
+                <th>代码</th>
+            </tr>
+            <tr>
+                <td>length</td>
+                <td>字典长度</td>
+                <td>{{ user|length }}</td>
+                <td class="code">{{ '{{ user|length }}' }}</td>
+            </tr>
+            <tr>
+                <td>dictsort</td>
+                <td>按键排序</td>
+                <td>{{ unsorted_dict|dictsort }}</td>
+                <td class="code">{{ '{{ unsorted_dict|dictsort }}' }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 日期和时间过滤器 -->
+    <div class="section">
+        <h2>6. 日期和时间过滤器</h2>
+        <table>
+            <tr>
+                <th>过滤器</th>
+                <th>示例</th>
+                <th>结果</th>
+                <th>代码</th>
+            </tr>
+            <tr>
+                <td>date</td>
+                <td>格式化日期</td>
+                <td>{{ now|date('Y-m-d') }}</td>
+                <td class="code">{{ '{{ now|date(\'Y-m-d\') }}' }}</td>
+            </tr>
+            <tr>
+                <td>time</td>
+                <td>格式化时间</td>
+                <td>{{ now|time('H:i:s') }}</td>
+                <td class="code">{{ '{{ now|time(\'H:i:s\') }}' }}</td>
+            </tr>
+            <tr>
+                <td>datetime</td>
+                <td>格式化日期时间</td>
+                <td>{{ now|datetime('Y-m-d H:i:s') }}</td>
+                <td class="code">{{ '{{ now|datetime(\'Y-m-d H:i:s\') }}' }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 过滤器链式调用 -->
+    <div class="section">
+        <h2>7. 过滤器链式调用</h2>
+        <div class="filter-group">
+            <p class="filter-name">多个过滤器依次应用:</p>
+            <p>原始字符串: "{{ raw_string }}"</p>
+            <p>应用过滤器后: "{{ raw_string|trim|title|replace('World', 'Everyone') }}"</p>
+            <p class="code">{{ '{{ raw_string|trim|title|replace(\'World\', \'Everyone\') }}' }}</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2控制结构示例</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin-bottom: 30px; border: 1px solid #ddd; padding: 20px; border-radius: 5px; }
+        h2 { color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        ul, ol { padding-left: 20px; }
+        li { margin: 5px 0; }
+        .code { background-color: #f5f5f5; padding: 10px; border-radius: 5px; font-family: monospace; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .highlight { background-color: #ffeb3b; padding: 2px 5px; }
+        .active { color: green; font-weight: bold; }
+        .inactive { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Jinja2控制结构示例</h1>
+    
+    <!-- 基本条件语句 -->
+    <div class="section">
+        <h2>1. 基本条件语句</h2>
+        
+        <h3>if语句</h3>
+        <div class="code">
+{% raw %}{% if user.is_logged_in %}
+  &lt;p&gt;Welcome back, {{ user.username }}!&lt;/p&gt;
+{% endif %}{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        {% if user.is_logged_in %}
+          <p>Welcome back, {{ user.username }}!</p>
+        {% endif %}
+        
+        <h3>if-else语句</h3>
+        <div class="code">
+{% raw %}{% if user.is_admin %}
+  &lt;p&gt;You are an administrator.&lt;/p&gt;
+{% else %}
+  &lt;p&gt;You are a regular user.&lt;/p&gt;
+{% endif %}{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        {% if user.is_admin %}
+          <p>You are an administrator.</p>
+        {% else %}
+          <p>You are a regular user.</p>
+        {% endif %}
+        
+        <h3>if-elif-else语句</h3>
+        <div class="code">
+{% raw %}{% if score >= 90 %}
+  &lt;p&gt;优秀&lt;/p&gt;
+{% elif score >= 80 %}
+  &lt;p&gt;良好&lt;/p&gt;
+{% elif score >= 60 %}
+  &lt;p&gt;及格&lt;/p&gt;
+{% else %}
+  &lt;p&gt;不及格&lt;/p&gt;
+{% endif %}{% endraw %}
+        </div>
+        <p>渲染结果 (当前分数: {{ score }}):</p>
+        {% if score >= 90 %}
+          <p>优秀</p>
+        {% elif score >= 80 %}
+          <p>良好</p>
+        {% elif score >= 60 %}
+          <p>及格</p>
+        {% else %}
+          <p>不及格</p>
+        {% endif %}
+    </div>
+    
+    <!-- 条件运算符 -->
+    <div class="section">
+        <h2>2. 条件运算符</h2>
+        
+        <h3>逻辑运算符 (and, or, not)</h3>
+        <div class="code">
+{% raw %}{% if user.age >= 18 and user.country == 'China' %}
+  &lt;p&gt;You are eligible.&lt;/p&gt;
+{% endif %}{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        {% if user.age >= 18 and user.country == 'China' %}
+          <p>You are eligible.</p>
+        {% endif %}
+        
+        <h3>成员运算符 (in, not in)</h3>
+        <div class="code">
+{% raw %}{% if 'admin' in user.roles %}
+  &lt;p&gt;You have admin privileges.&lt;/p&gt;
+{% endif %}{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        {% if 'admin' in user.roles %}
+          <p>You have admin privileges.</p>
+        {% endif %}
+        
+        <h3>测试运算符 (is, is not)</h3>
+        <div class="code">
+{% raw %}{% if variable is defined %}
+  &lt;p&gt;The variable exists: {{ variable }}&lt;/p&gt;
+{% else %}
+  &lt;p&gt;The variable is not defined.&lt;/p&gt;
+{% endif %}{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        {% if variable is defined %}
+          <p>The variable exists: {{ variable }}</p>
+        {% else %}
+          <p>The variable is not defined.</p>
+        {% endif %}
+    </div>
+    
+    <!-- 基本循环 -->
+    <div class="section">
+        <h2>3. 基本循环</h2>
+        
+        <h3>遍历列表</h3>
+        <div class="code">
+{% raw %}&lt;ul&gt;
+{% for item in items %}
+  &lt;li&gt;{{ item }}&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        <ul>
+        {% for item in items %}
+          <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+        
+        <h3>遍历字典</h3>
+        <div class="code">
+{% raw %}&lt;ul&gt;
+{% for key, value in user.items() %}
+  &lt;li&gt;{{ key }}: {{ value }}&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        <ul>
+        {% for key, value in user.items() %}
+          <li>{{ key }}: {{ value }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- 循环索引和属性 -->
+    <div class="section">
+        <h2>4. 循环索引和属性</h2>
+        
+        <div class="code">
+{% raw %}&lt;ul&gt;
+{% for item in items %}
+  &lt;li&gt;
+    {{ loop.index }}. {{ item }}
+    {% if loop.first %} &lt;span class="highlight"&gt;(First)&lt;/span&gt;{% endif %}
+    {% if loop.last %} &lt;span class="highlight"&gt;(Last)&lt;/span&gt;{% endif %}
+  &lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        <ul>
+        {% for item in items %}
+          <li>
+            {{ loop.index }}. {{ item }}
+            {% if loop.first %} <span class="highlight">(First)</span>{% endif %}
+            {% if loop.last %} <span class="highlight">(Last)</span>{% endif %}
+          </li>
+        {% endfor %}
+        </ul>
+        
+        <p>循环信息:</p>
+        <ul>
+            <li>总项目数: {{ items|length }}</li>
+            <li>循环变量可用属性: loop.index, loop.index0, loop.revindex, loop.revindex0, loop.first, loop.last, loop.length</li>
+        </ul>
+    </div>
+    
+    <!-- 循环控制 -->
+    <div class="section">
+        <h2>5. 循环控制</h2>
+        
+        <h3>else子句</h3>
+        <div class="code">
+{% raw %}&lt;ul&gt;
+{% for item in empty_list %}
+  &lt;li&gt;{{ item }}&lt;/li&gt;
+{% else %}
+  &lt;li&gt;No items found.&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        <ul>
+        {% for item in empty_list %}
+          <li>{{ item }}</li>
+        {% else %}
+          <li>No items found.</li>
+        {% endfor %}
+        </ul>
+        
+        <h3>break和continue</h3>
+        <div class="code">
+{% raw %}&lt;ul&gt;
+{% for item in items_with_control %}
+  {% if item == 'stop' %}
+    {% break %}
+  {% endif %}
+  {% if item == 'skip' %}
+    {% continue %}
+  {% endif %}
+  &lt;li&gt;{{ item }}&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;{% endraw %}
+        </div>
+        <p>渲染结果 (遇到'stop'停止，遇到'skip'跳过):</p>
+        <ul>
+        {% for item in items_with_control %}
+          {% if item == 'stop' %}
+            {% break %}
+          {% endif %}
+          {% if item == 'skip' %}
+            {% continue %}
+          {% endif %}
+          <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- 嵌套循环 -->
+    <div class="section">
+        <h2>6. 嵌套循环</h2>
+        
+        <div class="code">
+{% raw %}&lt;table&gt;
+{% for row in table_data %}
+  &lt;tr&gt;
+  {% for cell in row %}
+    &lt;td&gt;{{ cell }}&lt;/td&gt;
+  {% endfor %}
+  &lt;/tr&gt;
+{% endfor %}
+&lt;/table&gt;{% endraw %}
+        </div>
+        <p>渲染结果:</p>
+        <table>
+        {% for row in table_data %}
+          <tr>
+          {% for cell in row %}
+            <td>{{ cell }}</td>
+          {% endfor %}
+          </tr>
+        {% endfor %}
+        </table>
+    </div>
+    
+    <!-- 循环和条件结合 -->
+    <div class="section">
+        <h2>7. 循环和条件结合</h2>
+        
+        <div class="code">
+{% raw %}&lt;ul&gt;
+{% for user in users %}
+  {% if user.is_active %}
+    &lt;li class="active"&gt;{{ user.username }} (Active)&lt;/li&gt;
+  {% else %}
+    &lt;li class="inactive"&gt;{{ user.username }} (Inactive)&lt;/li&gt;
+  {% endif %}
+{% endfor %}
+&lt;/ul&gt;{% endraw %}
+        </div>
+        <p>渲染结果 (根据用户状态显示不同样式):</p>
+        <ul>
+        {% for user in users %}
+          {% if user.is_active %}
+            <li class="active">{{ user.username }} (Active)</li>
+          {% else %}
+            <li class="inactive">{{ user.username }} (Inactive)</li>
+          {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

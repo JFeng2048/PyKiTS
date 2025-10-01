@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2上下文和环境配置示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            color: #007bff;
+            margin-top: 40px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #495057;
+            margin-top: 30px;
+        }
+        
+        .section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .demo-box {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f8f9fa;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+        }
+        
+        .variable-output {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .filter-result {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+        }
+        
+        .test-result {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 4px;
+        }
+        
+        .test-passed {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .test-failed {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Jinja2上下文和环境配置示例</h1>
+        <p>本页面展示了Jinja2模板引擎中上下文数据和环境配置的使用方法</p>
+    </header>
+
+    <!-- 基本上下文变量示例 -->
+    <div class="section">
+        <h2>1. 基本上下文变量</h2>
+        <div class="demo-box">
+            <h3>字符串变量</h3>
+            <p>名称：<span class="variable-output">{{ name }}</span></p>
+            <p>网站：<span class="variable-output">{{ site_name }}</span></p>
+            
+            <h3>数字变量</h3>
+            <p>年龄：<span class="variable-output">{{ age }}</span></p>
+            <p>价格：<span class="variable-output">{{ price }}</span></p>
+            
+            <h3>布尔变量</h3>
+            <p>是否管理员：<span class="variable-output">{{ is_admin }}</span></p>
+            <p>{% if is_admin %}显示管理员菜单{% else %}显示普通用户菜单{% endif %}</p>
+            
+            <h3>列表变量</h3>
+            <p>技能列表：</p>
+            <ul>
+                {% for skill in skills %}
+                <li>{{ skill }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3>字典变量</h3>
+            <p>用户信息：</p>
+            <table>
+                <tr>
+                    <th>键</th>
+                    <th>值</th>
+                </tr>
+                {% for key, value in user_profile.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            
+            <h3>日期时间变量</h3>
+            <p>当前时间：<span class="variable-output">{{ current_time }}</span></p>
+            <p>格式化日期：<span class="variable-output">{{ current_time.strftime('%Y年%m月%d日 %H:%M:%S') }}</span></p>
+        </div>
+        
+        <div class="code-block">
+{# 模板中的上下文变量使用示例 #}
+
+{# 字符串变量 #}
+<p>名称：{{ name }}</p>
+<p>网站：{{ site_name }}</p>
+
+{# 数字变量 #}
+<p>年龄：{{ age }}</p>
+<p>价格：{{ price }}</p>
+
+{# 布尔变量 #}
+<p>是否管理员：{{ is_admin }}</p>
+<p>{% if is_admin %}显示管理员菜单{% else %}显示普通用户菜单{% endif %}</p>
+
+{# 列表变量 #}
+<p>技能列表：</p>
+<ul>
+    {% for skill in skills %}
+    <li>{{ skill }}</li>
+    {% endfor %}
+</ul>
+
+{# 字典变量 #}
+<p>用户信息：</p>
+{% for key, value in user_profile.items() %}
+    <p>{{ key }}: {{ value }}</p>
+{% endfor %}
+
+{# 日期时间变量 #}
+<p>当前时间：{{ current_time }}</p>
+<p>格式化日期：{{ current_time.strftime('%Y年%m月%d日 %H:%M:%S') }}</p>
+        </div>
+    </div>
+
+    <!-- 全局上下文变量示例 -->
+    <div class="section">
+        <h2>2. 全局上下文变量</h2>
+        <div class="note">
+            全局上下文变量是在环境配置中定义的，可以在所有模板中访问的变量。
+        </div>
+        
+        <div class="demo-box">
+            <p>网站名称：<span class="variable-output">{{ global_site_name }}</span></p>
+            <p>当前年份：<span class="variable-output">{{ current_year }}</span></p>
+            <p>应用版本：<span class="variable-output">{{ app_version }}</span></p>
+            <p>调试模式：<span class="variable-output">{{ debug_mode }}</span></p>
+            <p>服务器信息：<span class="variable-output">{{ server_info }}</span></p>
+        </div>
+        
+        <div class="code-block">
+{# 全局变量在模板中的使用 #}
+
+<p>网站名称：{{ global_site_name }}</p>
+<p>当前年份：{{ current_year }}</p>
+<p>应用版本：{{ app_version }}</p>
+<p>调试模式：{{ debug_mode }}</p>
+<p>服务器信息：{{ server_info }}</p>
+        </div>
+    </div>
+
+    <!-- 自定义过滤器示例 -->
+    <div class="section">
+        <h2>3. 自定义过滤器</h2>
+        <div class="note">
+            过滤器用于在模板中转换和处理数据，可以通过环境配置添加自定义过滤器。
+        </div>
+        
+        <div class="demo-box">
+            <h3>字符串过滤器</h3>
+            <p>原始字符串：{{ message }}</p>
+            <p>大写：<span class="filter-result">{{ message|uppercase }}</span></p>
+            <p>首字母大写：<span class="filter-result">{{ message|capitalize }}</span></p>
+            <p>反转：<span class="filter-result">{{ message|reverse_string }}</span></p>
+            
+            <h3>数字过滤器</h3>
+            <p>原始数字：{{ price }}</p>
+            <p>货币格式化：<span class="filter-result">{{ price|currency }}</span></p>
+            <p>货币格式化(美元)：<span class="filter-result">{{ price|currency('$') }}</span></p>
+            <p>百分比：<span class="filter-result">{{ discount|percentage }}</span></p>
+            
+            <h3>列表过滤器</h3>
+            <p>原始列表：{{ skills }}</p>
+            <p>排序：<span class="filter-result">{{ skills|sort|join(', ') }}</span></p>
+            <p>首字母大写：<span class="filter-result">{{ skills|capitalize_list|join(', ') }}</span></p>
+            <p>列表长度：<span class="filter-result">{{ skills|length }}</span></p>
+            
+            <h3>日期过滤器</h3>
+            <p>原始日期：{{ current_time }}</p>
+            <p>格式化日期：<span class="filter-result">{{ current_time|format_date }}</span></p>
+            <p>相对时间：<span class="filter-result">{{ current_time|relative_time }}</span></p>
+        </div>
+        
+        <div class="code-block">
+{# 自定义过滤器在模板中的使用 #}
+
+{# 字符串过滤器 #}
+<p>原始字符串：{{ message }}</p>
+<p>大写：{{ message|uppercase }}</p>
+<p>首字母大写：{{ message|capitalize }}</p>
+<p>反转：{{ message|reverse_string }}</p>
+
+{# 数字过滤器 #}
+<p>原始数字：{{ price }}</p>
+<p>货币格式化：{{ price|currency }}</p>
+<p>货币格式化(美元)：{{ price|currency('$') }}</p>
+<p>百分比：{{ discount|percentage }}</p>
+
+{# 列表过滤器 #}
+<p>原始列表：{{ skills }}</p>
+<p>排序：{{ skills|sort|join(', ') }}</p>
+<p>首字母大写：{{ skills|capitalize_list|join(', ') }}</p>
+
+{# 日期过滤器 #}
+<p>原始日期：{{ current_time }}</p>
+<p>格式化日期：{{ current_time|format_date }}</p>
+<p>相对时间：{{ current_time|relative_time }}</p>
+        </div>
+    </div>
+
+    <!-- 自定义测试示例 -->
+    <div class="section">
+        <h2>4. 自定义测试</h2>
+        <div class="note">
+            测试用于在条件语句中评估表达式，可以通过环境配置添加自定义测试。
+        </div>
+        
+        <div class="demo-box">
+            <h3>数字测试</h3>
+            <p>数字 {{ number1 }} 是偶数？ 
+                <span class="test-result {{ 'test-passed' if number1 is even else 'test-failed' }}">
+                    {{ number1 is even }}
+                </span>
+            </p>
+            <p>数字 {{ number2 }} 是偶数？ 
+                <span class="test-result {{ 'test-passed' if number2 is even else 'test-failed' }}">
+                    {{ number2 is even }}
+                </span>
+            </p>
+            <p>数字 {{ number3 }} 是素数？ 
+                <span class="test-result {{ 'test-passed' if number3 is prime else 'test-failed' }}">
+                    {{ number3 is prime }}
+                </span>
+            </p>
+            
+            <h3>数据类型测试</h3>
+            <p>{{ variable1 }} 是列表？ 
+                <span class="test-result {{ 'test-passed' if variable1 is list else 'test-failed' }}">
+                    {{ variable1 is list }}
+                </span>
+            </p>
+            <p>{{ variable2 }} 是字典？ 
+                <span class="test-result {{ 'test-passed' if variable2 is dict else 'test-failed' }}">
+                    {{ variable2 is dict }}
+                </span>
+            </p>
+            <p>{{ variable3 }} 是字符串？ 
+                <span class="test-result {{ 'test-passed' if variable3 is string else 'test-failed' }}">
+                    {{ variable3 is string }}
+                </span>
+            </p>
+            
+            <h3>内容测试</h3>
+            <p>字符串包含'Python'？ 
+                <span class="test-result {{ 'test-passed' if message is contains('Python') else 'test-failed' }}">
+                    {{ message is contains('Python') }}
+                </span>
+            </p>
+            <p>列表包含'Java'？ 
+                <span class="test-result {{ 'test-passed' if skills is contains('Java') else 'test-failed' }}">
+                    {{ skills is contains('Java') }}
+                </span>
+            </p>
+            <p>数值在范围内？ 
+                <span class="test-result {{ 'test-passed' if number1 is in_range(10, 30) else 'test-failed' }}">
+                    {{ number1 is in_range(10, 30) }}
+                </span>
+            </p>
+        </div>
+        
+        <div class="code-block">
+{# 自定义测试在模板中的使用 #}
+
+{# 数字测试 #}
+<p>数字 {{ number1 }} 是偶数？ {{ number1 is even }}</p>
+<p>数字 {{ number3 }} 是素数？ {{ number3 is prime }}</p>
+
+{# 数据类型测试 #}
+<p>{{ variable1 }} 是列表？ {{ variable1 is list }}</p>
+<p>{{ variable2 }} 是字典？ {{ variable2 is dict }}</p>
+
+{# 内容测试 #}
+<p>字符串包含'Python'？ {{ message is contains('Python') }}</p>
+<p>列表包含'Java'？ {{ skills is contains('Java') }}</p>
+<p>数值在范围内？ {{ number1 is in_range(10, 30) }}</p>
+
+{# 在条件语句中使用 #}
+{% if number1 is even %}
+    <p>{{ number1 }} 是一个偶数</p>
+{% endif %}
+        </div>
+    </div>
+
+    <!-- 全局函数示例 -->
+    <div class="section">
+        <h2>5. 全局函数</h2>
+        <div class="note">
+            全局函数是在环境配置中定义的，可以在所有模板中调用的函数。
+        </div>
+        
+        <div class="demo-box">
+            <h3>日期时间函数</h3>
+            <p>当前时间(默认格式)：<span class="variable-output">{{ now() }}</span></p>
+            <p>当前时间(自定义格式)：<span class="variable-output">{{ now('%Y-%m-%d') }}</span></p>
+            <p>当前时间(完整格式)：<span class="variable-output">{{ now('%Y年%m月%d日 %H时%M分%S秒') }}</span></p>
+            
+            <h3>文本处理函数</h3>
+            <p>Markdown渲染：</p>
+            <div class="variable-output" style="white-space: pre-wrap; font-weight: normal;">{{ markdown_content|render_markdown }}</div>
+            
+            <h3>数据转换函数</h3>
+            <p>JSON序列化：<span class="variable-output">{{ user_profile|to_json }}</span></p>
+            <p>加密字符串：<span class="variable-output">{{ '敏感信息'|encrypt }}</span></p>
+            
+            <h3>实用函数</h3>
+            <p>随机数(1-100)：<span class="variable-output">{{ random(1, 100) }}</span></p>
+            <p>URL编码：<span class="variable-output">{{ 'https://example.com/?q=Jinja2教程'|url_encode }}</span></p>
+        </div>
+        
+        <div class="code-block">
+{# 全局函数在模板中的使用 #}
+
+{# 日期时间函数 #}
+<p>当前时间(默认格式)：{{ now() }}</p>
+<p>当前时间(自定义格式)：{{ now('%Y-%m-%d') }}</p>
+
+{# 文本处理函数 #}
+<p>Markdown渲染：</p>
+<div>{{ markdown_content|render_markdown }}</div>
+
+{# 数据转换函数 #}
+<p>JSON序列化：{{ user_profile|to_json }}</p>
+<p>加密字符串：{{ '敏感信息'|encrypt }}</p>
+
+{# 实用函数 #}
+<p>随机数(1-100)：{{ random(1, 100) }}</p>
+<p>URL编码：{{ 'https://example.com/?q=Jinja2教程'|url_encode }}</p>
+        </div>
+    </div>
+
+    <!-- 环境配置特性示例 -->
+    <div class="section">
+        <h2>6. 环境配置特性</h2>
+        <div class="note">
+            Jinja2环境配置提供了多种特性来控制模板的渲染行为。
+        </div>
+        
+        <div class="demo-box">
+            <h3>空白控制</h3>
+            <p>空白控制演示：</p>
+            <div style="border: 1px solid #ccc; padding: 10px;">
+                {% for i in range(3) %}
+                行 {{ i+1 }}: 前后空白已控制
+                {% endfor %}
+            </div>
+            
+            <h3>自动转义</h3>
+            <p>未转义HTML：</p>
+            <div>{{ unsafe_html }}</div>
+            <p>自动转义HTML：</p>
+            <div>{{ unsafe_html|safe }}</div>
+            
+            <h3>循环控制</h3>
+            <p>使用扩展的循环控制：</p>
+            <ul>
+                {% for skill in skills %}
+                    {% if skill == 'Java' %}
+                        {% continue %}
+                    {% elif loop.index > 3 %}
+                        {% break %}
+                    {% endif %}
+                    <li>{{ loop.index }}. {{ skill }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3>Do语句</h3>
+            <p>使用do语句操作变量：</p>
+            {% set new_list = [] %}
+            {% for skill in skills %}
+                {% do new_list.append(skill.upper()) %}
+            {% endfor %}
+            <p>处理后的列表：{{ new_list }}</p>
+        </div>
+        
+        <div class="code-block">
+{# 环境配置特性在模板中的使用 #}
+
+{# 空白控制 #}
+{% for i in range(3) %}
+行 {{ i+1 }}: 前后空白已控制
+{% endfor %}
+
+{# 自动转义 #}
+<p>未转义HTML：</p>
+<div>{{ unsafe_html }}</div>
+<p>自动转义HTML：</p>
+<div>{{ unsafe_html|safe }}</div>
+
+{# 循环控制 #}
+<ul>
+    {% for skill in skills %}
+        {% if skill == 'Java' %}
+            {% continue %}
+        {% elif loop.index > 3 %}
+            {% break %}
+        {% endif %}
+        <li>{{ loop.index }}. {{ skill }}</li>
+    {% endfor %}
+</ul>
+
+{# Do语句 #}
+{% set new_list = [] %}
+{% for skill in skills %}
+    {% do new_list.append(skill.upper()) %}
+{% endfor %}
+<p>处理后的列表：{{ new_list }}</p>
+        </div>
+    </div>
+
+    <!-- 最佳实践建议 -->
+    <div class="section">
+        <h2>7. 上下文和环境配置最佳实践</h2>
+        <div class="note">
+            <h3>上下文管理最佳实践</h3>
+            <ul>
+                <li><strong>组织数据</strong>：将相关数据组织成逻辑组（使用字典）</li>
+                <li><strong>命名约定</strong>：使用一致的命名约定，如蛇形命名法</li>
+                <li><strong>最小化全局变量</strong>：只包含真正需要全局访问的数据</li>
+                <li><strong>敏感数据处理</strong>：避免在模板中暴露敏感信息</li>
+                <li><strong>预处理数据</strong>：在传递给模板前尽可能处理数据</li>
+            </ul>
+            
+            <h3>环境配置最佳实践</h3>
+            <ul>
+                <li><strong>开发vs生产</strong>：为不同环境使用不同的配置</li>
+                <li><strong>缓存策略</strong>：生产环境启用缓存，开发环境禁用缓存</li>
+                <li><strong>自动转义</strong>：始终启用自动转义以防止XSS攻击</li>
+                <li><strong>扩展使用</strong>：合理使用扩展增强模板功能</li>
+                <li><strong>自定义功能</strong>：将常用功能封装为过滤器、测试或全局函数</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 简单的交互功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有section添加点击展开/折叠功能
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                const h2 = section.querySelector('h2');
+                if (h2) {
+                    h2.style.cursor = 'pointer';
+                    h2.addEventListener('click', function() {
+                        const content = section.querySelector('.demo-box, .code-block');
+                        if (content) {
+                            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

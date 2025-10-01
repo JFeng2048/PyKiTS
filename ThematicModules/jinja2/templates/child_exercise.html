@@ -1,0 +1,137 @@
+{% extends "base_exercise.html" %}
+
+{% block head %}
+{{ super() }}
+{% block styles %}
+{{ super() }}
+<style>
+    .exercise-content {
+        background-color: #f9f9f9;
+        border-left: 4px solid #4CAF50;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .exercise-section {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+    .exercise-section:last-child {
+        border-bottom: none;
+    }
+    h2 {
+        color: #4CAF50;
+    }
+    h3 {
+        color: #388E3C;
+    }
+    .note {
+        background-color: #fff3cd;
+        padding: 10px;
+        border-radius: 3px;
+        border-left: 4px solid #ffc107;
+        margin: 15px 0;
+    }
+    .code-block {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 3px;
+        overflow-x: auto;
+        font-family: 'Courier New', monospace;
+    }
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block header_subtitle %}模板继承练习演示{% endblock %}
+
+{% block navigation %}
+{{ super() }}
+<li><a href="/exercise-specific">练习专用</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="content-box">
+    <div class="exercise-content">
+        <h2>Jinja2模板继承练习</h2>
+        <p>这个页面演示了Jinja2的模板继承功能。本页面是一个子模板，继承自基础模板base_exercise.html。</p>
+        
+        <div class="note">
+            <strong>提示：</strong>在子模板中，我们可以通过<code>{{ '{{ super() }}' }}</code>函数来调用父模板中定义的内容，同时添加自己的内容。
+        </div>
+        
+        <div class="exercise-section">
+            <h3>1. 模板继承的基本概念</h3>
+            <p>模板继承允许你创建一个基础模板（父模板），定义网站的基本结构，然后在子模板中覆盖特定的部分。</p>
+            <div class="code-block">
+                {# 基础模板示例 #}
+                {% raw %}{% block content %}
+    <!-- 基础内容 -->
+{% endblock %}{% endraw %}
+            </div>
+            <div class="code-block">
+                {# 子模板示例 #}
+                {% raw %}{% extends "base.html" %}
+
+{% block content %}
+    {{ super() }}
+    <!-- 子模板内容 -->
+{% endblock %}{% endraw %}
+            </div>
+        </div>
+        
+        <div class="exercise-section">
+            <h3>2. 如何使用块（Blocks）</h3>
+            <p>块是模板中可以被子模板覆盖的部分。在基础模板中，你可以使用<code>{% raw %}{% block 名称 %}{% endblock %}{% endraw %}</code>来定义块。</p>
+            <p>常见的块包括：</p>
+            <ul>
+                <li><code>head</code> - 页面头部信息</li>
+                <li><code>title</code> - 页面标题</li>
+                <li><code>styles</code> - CSS样式</li>
+                <li><code>scripts</code> - JavaScript脚本</li>
+                <li><code>content</code> - 主要内容区域</li>
+                <li><code>footer</code> - 页脚信息</li>
+            </ul>
+        </div>
+        
+        <div class="exercise-section">
+            <h3>3. 练习内容</h3>
+            <p>{{ content }}</p>
+            
+            <p>请完成以下任务：</p>
+            <ol>
+                <li>修改基础模板，添加更多可定制的块</li>
+                <li>创建多个不同的子模板，每个子模板专注于不同的功能</li>
+                <li>在子模板中使用<code>{{ '{{ super() }}' }}</code>函数</li>
+                <li>尝试嵌套块和继承多个层次</li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ super() }}
+<p>这是子模板添加的额外页脚信息</p>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // 子模板添加的JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('子模板脚本已加载');
+        
+        // 简单的交互示例
+        const sections = document.querySelectorAll('.exercise-section');
+        sections.forEach(function(section, index) {
+            section.addEventListener('click', function() {
+                alert('点击了第 ' + (index + 1) + ' 个练习部分');
+            });
+            section.style.cursor = 'pointer';
+        });
+    });
+</script>
+{% endblock %}

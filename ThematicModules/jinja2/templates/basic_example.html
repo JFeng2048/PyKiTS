@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja2基础语法示例</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .example { background-color: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .code { background-color: #eee; padding: 5px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Jinja2基础语法示例</h1>
+    
+    <div class="example">
+        <h2>1. 变量显示</h2>
+        <p>Hello, {{ name }}!</p>
+        <p>Your age is {{ age }}.</p>
+        <p class="code">{{ '{{ name }}' }} 和 {{ '{{ age }}' }} 是变量</p>
+    </div>
+    
+    <div class="example">
+        <h2>2. 表达式</h2>
+        <p>2 + 3 = {{ 2 + 3 }}</p>
+        <p>Is 5 greater than 3? {{ 5 > 3 }}</p>
+        <p>Your age next year: {{ age + 1 }}</p>
+        <p class="code">{{ '{{ 2 + 3 }}' }}、{{ '{{ 5 > 3 }}' }} 和 {{ '{{ age + 1 }}' }} 是表达式</p>
+    </div>
+    
+    <div class="example">
+        <h2>3. 字符串操作</h2>
+        <p>Your name in uppercase: {{ name|upper }}</p>
+        <p>Your name in lowercase: {{ name|lower }}</p>
+        <p class="code">{{ '{{ name|upper }}' }} 使用了过滤器</p>
+    </div>
+    
+    <div class="example">
+        <h2>4. 列表访问</h2>
+        <p>First hobby: {{ hobbies[0] }}</p>
+        <p>Second hobby: {{ hobbies[1] }}</p>
+        <p class="code">{{ '{{ hobbies[0] }}' }} 访问列表元素</p>
+    </div>
+    
+    <div class="example">
+        <h2>5. 字典访问</h2>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p class="code">{{ '{{ user.username }}' }} 访问字典属性</p>
+    </div>
+    
+    <div class="example">
+        <h2>6. 注释示例</h2>
+        <p>This is visible content.</p>
+        {# This is a comment and won't be visible in the output #}
+        <p class="code">{{ '{# This is a comment #}' }} 是Jinja2注释</p>
+    </div>
+    
+    <div class="example">
+        <h2>7. 转义与安全输出</h2>
+        <p>转义后: {{ html_content }}</p>
+        <p>原始输出: {{ html_content|safe }}</p>
+        <p class="code">{{ '{{ html_content|safe }}' }} 禁用了自动转义</p>
+    </div>
+    
+    <div class="example">
+        <h2>8. 日期和时间</h2>
+        <p>Current date: {{ current_date.strftime('%Y-%m-%d') }}</p>
+        <p>Current time: {{ current_date.strftime('%H:%M:%S') }}</p>
+        <p class="code">使用Python的strftime方法格式化日期</p>
+    </div>
+    
+    <div class="example">
+        <h2>9. 默认值</h2>
+        <p>Optional value: {{ optional_value|default('Not provided') }}</p>
+        <p class="code">{{ '{{ optional_value|default(\'Not provided\') }}' }} 设置了默认值</p>
+    </div>
+    
+    <div class="example">
+        <h2>10. 测试值是否存在</h2>
+        {% if missing_value is defined %}
+            <p>Missing value exists: {{ missing_value }}</p>
+        {% else %}
+            <p>Missing value is not defined.</p>
+        {% endif %}
+        <p class="code">使用{% raw %}{% if missing_value is defined %}{% endraw %} 测试变量是否存在</p>
+    </div>
+</body>
+</html>
